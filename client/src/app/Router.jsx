@@ -4,9 +4,11 @@ import EditPost from 'features/post/editPost/EditPost'
 import { Context, UserContext } from 'index'
 import { useContext } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import MainPage from './main/MainPage'
+import { observer } from 'mobx-react-lite'
 
-export const Routing = () => {
+import MainPage from '../pages/main/MainPage'
+
+const Router = observer(() => {
   const { userStore } = useContext(UserContext)
 
   const isAuth = userStore.isAuth
@@ -34,7 +36,9 @@ export const Routing = () => {
       <Route path="*" element={<LoginAction />} />
     </Routes>
   )
-}
+})
+
+export default Router
 
 // export const Router = () => {
 //   const authed = authStore((s) => s.user.authed)

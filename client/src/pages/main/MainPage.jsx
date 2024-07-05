@@ -1,48 +1,48 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { observer } from 'mobx-react-lite';
-import { PostContext } from 'index';
-import CardItem from 'shared/ui/card/Card';
-import '../../app/styles/styles.css';
-import { CreatePost } from 'features/post/createPost';
-import Lightbox from 'react-image-lightbox';
-import 'react-image-lightbox/style.css';
-import { Button } from '@mui/material';
-import PaginationOutlined from 'features/post/pagination/ui/Pagination';
-import countPages from 'features/post/pagination/lib/countPages';
-import elementsToRender from 'features/post/pagination/lib/elementsToRender';
+import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { observer } from 'mobx-react-lite'
+import { PostContext } from 'index'
+import CardItem from 'shared/ui/card/Card'
+import '../../app/styles/styles.css'
+import { CreatePost } from 'features/post/createPost'
+import Lightbox from 'react-image-lightbox'
+import 'react-image-lightbox/style.css'
+import { Button } from '@mui/material'
+import PaginationOutlined from 'features/post/pagination/ui/Pagination'
+import countPages from 'features/post/pagination/lib/countPages'
+import elementsToRender from 'features/post/pagination/lib/elementsToRender'
 
-function MainPage() {
-  const { postStore } = useContext(PostContext);
+const MainPage = observer(() => {
+  const { postStore } = useContext(PostContext)
   useEffect(() => {
     const getPosts = async () => {
-      await postStore.getPosts();
-    };
-    getPosts();
-  }, [postStore]);
+      await postStore.getPosts()
+    }
+    getPosts()
+  }, [postStore])
 
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(1)
   const handlePageChange = (event, value) => {
-    setPage(value);
-  };
+    setPage(value)
+  }
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   const handleClickOpen = () => {
-    setOpen(true);
-  };
+    setOpen(true)
+  }
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedImage, setSelectedImage] = useState(null)
 
-  const handleImageClick = image => {
-    setSelectedImage(image);
-    setIsOpen(true);
-  };
-  const pages = countPages(postStore.post.length);
+  const handleImageClick = (image) => {
+    setSelectedImage(image)
+    setIsOpen(true)
+  }
+  const pages = countPages(postStore.post.length)
 
   const posts = useMemo(
     () => elementsToRender(postStore.post, page),
-    [page, postStore.post]
-  );
+    [page, postStore.post],
+  )
 
   return (
     <div className="main">
@@ -65,7 +65,7 @@ function MainPage() {
           />
         )}
         <div className=" gridContainer">
-          {posts.map(el => (
+          {posts.map((el) => (
             <CardItem
               key={el._id}
               id={el._id}
@@ -80,7 +80,7 @@ function MainPage() {
         </div>
       </div>
     </div>
-  );
-}
+  )
+})
 
-export default observer(MainPage);
+export default MainPage
