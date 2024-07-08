@@ -11,62 +11,28 @@ import MainPage from '../pages/main/MainPage'
 const Router = observer(() => {
   const { userStore } = useContext(UserContext)
 
-  const isAuth = userStore.isAuth
+  const { isAuth, isActivated } = userStore
   console.log(userStore)
   console.log(userStore.user)
   console.log(isAuth)
+  console.log(isActivated)
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={!isAuth ? <Navigate to="/login" /> : <Navigate to="/main" />}
-      />
-
-      <Route
-        path="/main"
-        element={isAuth ? <MainPage /> : <Navigate to="/login" />}
-      />
-      <Route
-        path="/login"
-        element={!isAuth ? <LoginAction /> : <Navigate to="/main" />}
-      />
-      <Route path="/signup" element={<SignupForm />} />
-      <Route path="/posts/:id" element={<EditPost />} />
-      {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+      {!isAuth && (
+        <>
+          <Route path="/" element={<LoginAction />} />
+          <Route path="/signup" element={<SignupForm />} />{' '}
+        </>
+      )}
+      {isAuth && isActivated && (
+        <Route path="/" element={<MainPage />}>
+          <Route path="/posts/:id" element={<EditPost />} />
+        </Route>
+      )}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 })
 
 export default Router
-
-// export const Router = () => {
-//   const authed = authStore((s) => s.user.authed)
-//   const ChartComponent = <MemoChartComponent />
-//   const TrainCard = <MemoTrainCard />
-//   const DateTimeComponent = <MemoDateTimeComponent />
-
-//   return (
-//     <div style={{ height: '100vh', width: '100vw', overflow: 'hidden' }}>
-//       <Routes>
-//         {!authed && <Route path="/" element={<Auth />} />}
-//         {authed && (
-//           <Route path="/" element={<MainPage />}>
-//             <Route
-//               index
-//               element={
-//                 <JoinedPage
-//                   MemoMapComponent={<MemoMapComponent />}
-//                   MemoChartComponent={ChartComponent}
-//                   MemoTrainCard={TrainCard}
-//                   MemoDateTimeComponent={DateTimeComponent}
-//                 />
-//               }
-//             />
-//           </Route>
-//         )}
-//         <Route path="*" element={<Navigate to="/" replace />} />
-//       </Routes>
-//     </div>
-//   )
-// }

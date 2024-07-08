@@ -31,7 +31,8 @@ app.use(
     secret: process.env.SESSION_SECRET ?? 'test',
     resave: true,
     store: new FileStore({
-      path: '/home/vladimir/Documents/Текущие_проекты/node-app/server/sessions', // Provide the correct path here
+      // path: '/home/vladimir/Documents/Текущие_проекты/node-app/server/sessions',
+      path: '/home/vponamarev/Documents/code/node-app-main/server/sessions',
     }),
     saveUninitialized: false,
     cookie: {
