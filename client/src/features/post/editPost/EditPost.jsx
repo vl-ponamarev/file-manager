@@ -30,6 +30,9 @@ const EditPost = observer(() => {
     navigate('/login')
   }
 
+  console.log(location.state)
+  console.log(prop1)
+
   const [formData, setFormData] = React.useState({
     title: prop1,
     content: prop2,

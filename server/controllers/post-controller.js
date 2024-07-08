@@ -43,7 +43,6 @@ class PostController {
         posts.map(async (post) => {
           const file = await FileService.getFileByPostId(post._id.toHexString())
           const user = await userService.getUserById(post.author.toHexString())
-          console.log('user-------->>>>>>>>>>>', user)
           return {
             _id: post._doc._id,
             title: post._doc.title,

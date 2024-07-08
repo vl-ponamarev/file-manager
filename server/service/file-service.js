@@ -1,32 +1,30 @@
-const multer = require('multer');
+const multer = require('multer')
 
-const FileModel = require('../models/file-model');
+const FileModel = require('../models/file-model')
 
 class FileService {
   storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, process.env.UPLOAD_URL);
+      cb(null, process.env.UPLOAD_URL)
     },
     filename: (req, file, cb) => {
-      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-      const extension = file.originalname.split('.').pop();
-      cb(null, `${file.fieldname}-${uniqueSuffix}.${extension}`);
-    }
-  });
+      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`
+      const extension = file.originalname.split('.').pop()
+      cb(null, `${file.fieldname}-${uniqueSuffix}.${extension}`)
+    },
+  })
 
-  upload = multer({ storage: this.storage }).single('mediacontent');
+  upload = multer({ storage: this.storage }).single('mediacontent')
 
   async getFileByPostId(postId) {
     try {
-      const file = await FileModel.findOne({ postId });
+      const file = await FileModel.findOne({ postId })
       if (!file) {
-        return null;
+        return null
       }
-      return file.fileName;
+      return file.fileName
     } catch (error) {
-      throw new Error(
-        `Failed to get file for post ${postId}: ${error.message}`
-      );
+      throw new Error(`Failed to get file for post ${postId}: ${error.message}`)
     }
   }
 
@@ -36,22 +34,22 @@ class FileService {
         postId,
         fileName,
         fileType,
-        originalname
-      });
-      await file.save();
-      return file;
+        originalname,
+      })
+      await file.save()
+      return file
     } catch (error) {
-      throw new Error(`Failed to create file: ${error.message}`);
+      throw new Error(`Failed to create file: ${error.message}`)
     }
   }
 
   async deleteFile(file) {
     try {
-      await FileModel.deleteOne(file).then((res) => console.log(res));
+      await FileModel.deleteOne(file).then((res) => console.log(res))
     } catch (err) {
-      console.error(err);
+      console.error(err)
     }
   }
 }
 
-module.exports = new FileService();
+module.exports = new FileService()

@@ -1,7 +1,7 @@
 import LoginAction from 'entities/login/LoginAction'
 import SignupForm from 'entities/signup/SignupForm'
 import EditPost from 'features/post/editPost/EditPost'
-import { Context, UserContext } from 'index'
+import { UserContext } from 'index'
 import { useContext } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
@@ -33,7 +33,7 @@ const Router = observer(() => {
       />
       <Route path="/signup" element={<SignupForm />} />
       <Route path="/posts/:id" element={<EditPost />} />
-      <Route path="*" element={<LoginAction />} />
+      {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
     </Routes>
   )
 })

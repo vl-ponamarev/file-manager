@@ -17,7 +17,8 @@ const { PORT } = process.env
 app.use(
   cors({
     credentials: true,
-    origin: process.env.CLIENT_URL,
+    // origin: process.env.CLIENT_URL,
+    origin: true,
   }),
 )
 app.use(morgan('dev'))
@@ -29,7 +30,9 @@ app.use(
     name: 'sid',
     secret: process.env.SESSION_SECRET ?? 'test',
     resave: true,
-    store: new FileStore(),
+    store: new FileStore({
+      path: '/home/vladimir/Documents/Текущие_проекты/node-app/server/sessions', // Provide the correct path here
+    }),
     saveUninitialized: false,
     cookie: {
       maxAge: 1000 * 60 * 60 * 12,
