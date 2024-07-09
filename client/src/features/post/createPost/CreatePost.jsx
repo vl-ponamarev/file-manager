@@ -24,6 +24,7 @@ export function CreatePost({ open, setOpen }) {
 
   const handleClose = () => setOpen(false)
   const handleSave = async () => {
+    console.log(formData)
     await postStore.createOne(formData)
     postStore.getPosts()
     handleClose()

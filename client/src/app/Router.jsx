@@ -1,5 +1,4 @@
 import LoginAction from 'entities/login/LoginAction'
-import SignupForm from 'entities/signup/SignupForm'
 import EditPost from 'features/post/editPost/EditPost'
 import { UserContext } from 'index'
 import { useContext } from 'react'
@@ -7,11 +6,16 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 
 import MainPage from '../pages/main/MainPage'
+import SignUpAction from 'entities/signup/SignUpAction'
+import ActivationPage from 'pages/activation/ActivationPage'
 
 const Router = observer(() => {
   const { userStore } = useContext(UserContext)
 
-  const { isAuth, isActivated } = userStore
+  const {
+    isAuth,
+    user: { isActivated },
+  } = userStore
   console.log(userStore)
   console.log(userStore.user)
   console.log(isAuth)
@@ -22,8 +26,11 @@ const Router = observer(() => {
       {!isAuth && (
         <>
           <Route path="/" element={<LoginAction />} />
-          <Route path="/signup" element={<SignupForm />} />{' '}
+          <Route path="/signup" element={<SignUpAction />} />{' '}
         </>
+      )}
+      {isAuth && !isActivated && (
+        <Route path="/" element={<ActivationPage />} />
       )}
       {isAuth && isActivated && (
         <Route path="/" element={<MainPage />}>

@@ -10,6 +10,8 @@ import { Button } from '@mui/material'
 import PaginationOutlined from 'features/post/pagination/ui/Pagination'
 import countPages from 'features/post/pagination/lib/countPages'
 import elementsToRender from 'features/post/pagination/lib/elementsToRender'
+import Logout from 'entities/logout/Logout'
+import UploadFile from 'features/uploadFile/UploadFile'
 
 const MainPage = observer(() => {
   const { postStore } = useContext(PostContext)
@@ -52,6 +54,7 @@ const MainPage = observer(() => {
             Добавить пост
           </Button>
           {open && <CreatePost {...{ open, setOpen }} />}
+          <UploadFile />
         </div>
         <PaginationOutlined
           count={pages}

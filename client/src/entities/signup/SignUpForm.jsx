@@ -11,7 +11,7 @@ import { observer } from 'mobx-react-lite'
 import { Context, UserContext } from '../../index'
 import { ModeToggle } from 'shared/lib/modeToggle'
 
-function SignupForm() {
+function SignUpForm() {
   const [input, setInput] = useState({})
   const { userStore } = useContext(UserContext)
 
@@ -30,7 +30,7 @@ function SignupForm() {
           sx={{
             width: 300,
             mx: 'auto', // margin left & right
-            my: 4, // margin top & botom
+            my: 50, // margin top & botom
             py: 3, // padding top & bottom
             px: 2, // padding left & right
             display: 'flex',
@@ -91,4 +91,4 @@ function SignupForm() {
   )
 }
 
-export default observer(SignupForm)
+export default observer(SignUpForm)

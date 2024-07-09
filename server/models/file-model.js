@@ -1,25 +1,29 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const fileSchema = new mongoose.Schema({
   postId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Post',
-    required: true
+    required: true,
   },
   fileName: {
     type: String,
-    required: true
+    required: true,
   },
   fileType: {
     type: String,
-    required: true
+    required: true,
   },
   originalname: {
     type: String,
-    required: true
-  }
-});
+    required: true,
+  },
+  // owner: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'User',
+  // },
+})
 
-const File = mongoose.model('File', fileSchema);
+const File = mongoose.model('File', fileSchema)
 
-module.exports = File;
+module.exports = File

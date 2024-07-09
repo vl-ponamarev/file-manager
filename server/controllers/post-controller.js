@@ -4,12 +4,17 @@ const userService = require('../service/user-service')
 
 class PostController {
   async createPost(req, res, next) {
+    console.log('createPost', req.body)
+    console.log('req.file===', req.file)
     try {
       FileService.upload(req, res, async (err) => {
+        console.log('createPost---------', req.body)
+        console.log('creq.file---------', req.file)
         if (err) {
           return next(err)
         }
         if (!req.file) {
+          console.log('req.body---------', req.body)
           const post = await PostService.createPost(req.body)
           await FileService.createFile(
             post.id,

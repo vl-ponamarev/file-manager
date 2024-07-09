@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import axios from 'axios'
-import AuthService from '../../shared/api/authServise'
-import { API_URL } from '../../shared/http'
+import AuthService from '../../../shared/api/authServise'
+import { API_URL } from '../../../shared/http'
 
 export default class Store {
   user = {}

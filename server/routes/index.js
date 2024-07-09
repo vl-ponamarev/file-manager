@@ -6,6 +6,7 @@ const router = new Router()
 
 const authMiddleware = require('../middlewares/auth-middleware')
 const postController = require('../controllers/post-controller')
+const filesController = require('../controllers/files-controller')
 
 router.post(
   '/registration',
@@ -24,5 +25,7 @@ router.post('/create-post', postController.createPost)
 router.get('/posts', authMiddleware, postController.getPosts)
 router.put('/posts/:id', postController.editPost)
 router.delete('/delete', postController.deleteOnePost)
+
+router.post('/save-files', filesController.saveFiles)
 
 module.exports = router
