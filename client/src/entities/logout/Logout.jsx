@@ -9,7 +9,7 @@ function Logout() {
 
   const logoutHandler = () => {
     userStore.logout()
-    window.location.replace('/')
+    window.location.replace('/login')
   }
 
   const ColorButton = styled(Button)(({ theme }) => ({

@@ -4,6 +4,7 @@ import Button from '@mui/material/Button'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { UserContext, FilesContext } from 'index'
 import { useEffect } from 'react'
+import axios from 'axios'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -29,20 +30,47 @@ export default function UploadFile() {
 
   console.log(files)
 
+  // useEffect(() => {
+  //   const handleSave = async () => {
+  //     if (files) {
+  //       const data = {
+  //         owner: userStore.user.id,
+  //         mediacontent: files,
+  //       }
+  //       await filesStore.saveFiles(data)
+  //     }
+
+  //     // FilesStore.getFiles()
+  //   }
+  //   handleSave()
+  // }, [files])
+
   useEffect(() => {
     const handleSave = async () => {
-      if (files) {
-        const data = {
-          owner: userStore.user.id,
-          mediacontent: files,
+      if (files && files.length > 0) {
+        const formData = new FormData()
+        formData.append('owner', userStore.user.id)
+        for (let i = 0; i < files.length; i++) {
+          console.log('Adding file:', files[i])
+          formData.append('mediacontent', files[i])
         }
-        await filesStore.saveFiles(data)
-      }
 
-      // FilesStore.getFiles()
+        for (let [key, value] of formData.entries()) {
+          console.log(key, value)
+        }
+
+        try {
+          const response = await filesStore.saveFiles(formData)
+          console.log(response.data)
+
+          // filesStore.getFiles()
+        } catch (error) {
+          console.error('Error uploading files:', error)
+        }
+      }
     }
     handleSave()
-  }, [files])
+  }, [files, userStore.user.id])
 
   return (
     <Button
@@ -53,7 +81,7 @@ export default function UploadFile() {
       startIcon={<CloudUploadIcon />}
     >
       Upload file
-      <VisuallyHiddenInput type="file" onChange={handleFileChange} />
+      <VisuallyHiddenInput type="file" onChange={handleFileChange} multiple />
     </Button>
   )
 }

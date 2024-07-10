@@ -1,14 +1,17 @@
 const multer = require('multer')
 
 const FileModel = require('../models/file-model')
+const FilesStoreModel = require('../models/files-store-model')
 
 class FileService {
   storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, process.env.UPLOAD_URL)
     },
+    // filename: (req, file, cb) => {
+    //   cb(null, `${Date.now()}-${file.originalname}`);
+    // },
     filename: (req, file, cb) => {
-      console.log('0000000000000', file)
       const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`
       const extension = file.originalname.split('.').pop()
       cb(null, `${file.fieldname}-${uniqueSuffix}.${extension}`)
@@ -16,7 +19,7 @@ class FileService {
   })
 
   // upload = multer({ storage: this.storage }).single('mediacontent')
-  upload = multer({ storage: this.storage }).single('mediacontent', 50)
+  upload = multer({ storage: this.storage }).array('mediacontent', 50)
 
   async getFileByPostId(postId) {
     try {
@@ -45,24 +48,20 @@ class FileService {
     }
   }
 
-  async createFiles(postId, files) {
+  async createFiles(fileDocs) {
+    console.log('fileDocs ------>>>>>>>>>>>', fileDocs)
     try {
-      // Предполагаем, что files - это массив файлов, полученных после загрузки
-      const savedFiles = await Promise.all(
-        files.map((file) => {
-          const { filename, mimetype, originalname } = file
-          const fileDocument = new FileModel({
-            postId,
-            fileName: filename, // или как вы хотите называть это поле
-            fileType: mimetype,
-            originalname,
-          })
-          return fileDocument.save() // Сохраняем файл в базу данных
-        }),
+      const result = await FilesStoreModel.insertMany(fileDocs).then((res) =>
+        console.log('res?????????', res),
       )
-      return savedFiles
+      console.log('result 55555555555555555', result)
+      return {
+        success: true,
+        message: 'Files uploaded successfully',
+        data: result,
+      }
     } catch (error) {
-      throw new Error(`Failed to create files: ${error.message}`)
+      return { success: false, error: 'Error saving files to database' }
     }
   }
 

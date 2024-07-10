@@ -22,7 +22,9 @@ export default class FilesStore {
   }
 
   async saveFiles(formData) {
-    console.log(formData)
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value)
+    }
     try {
       const response = await FilesService.saveFiles(formData)
       console.log(response)

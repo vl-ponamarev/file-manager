@@ -4,24 +4,24 @@ const userService = require('../service/user-service')
 class FilesController {
   async saveFiles(req, res, next) {
     try {
-      console.log('req--------->>>>>>>>>>>', req.files)
-      console.log('reqBODY--------->>>>>>>>>>>', req.body)
       FileService.upload(req, res, async (err) => {
-        console.log('createPost---------', req.body)
-        console.log('creq.file---------', req.file)
-        console.log('creq.files---------', req.files)
         if (err) {
           return next(err)
         }
-      })
+        const files = req.files
+        const owner = req.body.owner
 
-      //   await FileService.createFiles(
-      //     post.id,
-      //     req.file.filename,
-      //     req.file.mimetype,
-      //     req.file.originalname,
-      //   )
-      //   return res.json(post)
+        console.log('files-------->>>>>--------', files)
+        const fileDocs = files?.map((file) => ({
+          owner,
+          filename: file.filename,
+          path: file.path,
+          mimetype: file.mimetype,
+          size: file.size,
+        }))
+        const result = await FileService.createFiles(fileDocs)
+        return res.json(result)
+      })
     } catch (error) {
       next(error)
     }

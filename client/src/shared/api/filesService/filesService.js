@@ -12,7 +12,6 @@ export default class FilesService {
   }
 
   static async saveFiles(formData) {
-    console.log(formData)
     try {
       const response = await api.post('/save-files', formData, {
         headers: {

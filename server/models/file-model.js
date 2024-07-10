@@ -18,10 +18,6 @@ const fileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // owner: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'User',
-  // },
 })
 
 const File = mongoose.model('File', fileSchema)

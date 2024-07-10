@@ -21,7 +21,6 @@ class UserService {
       password: hashPassword,
       activationLink,
     })
-    console.log('===========ok==========')
     await mailService.sendActivationMail(
       email,
       `${process.env.API_URL}/activate/${activationLink}`,
