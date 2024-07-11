@@ -51,9 +51,7 @@ class FileService {
   async createFiles(fileDocs) {
     console.log('fileDocs ------>>>>>>>>>>>', fileDocs)
     try {
-      const result = await FilesStoreModel.insertMany(fileDocs).then((res) =>
-        console.log('res?????????', res),
-      )
+      const result = await FilesStoreModel.insertMany(fileDocs)
       console.log('result 55555555555555555', result)
       return {
         success: true,
@@ -67,7 +65,10 @@ class FileService {
 
   async deleteFile(file) {
     try {
-      await FileModel.deleteOne(file).then((res) => console.log(res))
+      // await FileModel.deleteOne(file).then((res) => console.log(res))
+      await FilesStoreModel.deleteMany({
+        _id: { $in: ['668e5967b1a684835129d051', '668e5967b1a684835129d052'] },
+      })
     } catch (err) {
       console.error(err)
     }

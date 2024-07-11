@@ -51,13 +51,12 @@ export default function UploadFile() {
         const formData = new FormData()
         formData.append('owner', userStore.user.id)
         for (let i = 0; i < files.length; i++) {
-          console.log('Adding file:', files[i])
           formData.append('mediacontent', files[i])
         }
 
-        for (let [key, value] of formData.entries()) {
-          console.log(key, value)
-        }
+        // for (let [key, value] of formData.entries()) {
+        //   console.log(key, value)
+        // }
 
         try {
           const response = await filesStore.saveFiles(formData)
