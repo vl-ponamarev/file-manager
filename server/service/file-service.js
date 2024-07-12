@@ -1,4 +1,8 @@
 const multer = require('multer')
+const fs = require('fs')
+const util = require('util')
+const unlinkAsync = util.promisify(fs.unlink)
+const path = require('path')
 
 const FileModel = require('../models/file-model')
 const FilesStoreModel = require('../models/files-store-model')
@@ -21,15 +25,13 @@ class FileService {
   // upload = multer({ storage: this.storage }).single('mediacontent')
   upload = multer({ storage: this.storage }).array('mediacontent', 50)
 
-  async getFileByPostId(postId) {
+  async getFiles() {
     try {
-      const file = await FileModel.findOne({ postId })
-      if (!file) {
-        return null
-      }
-      return file.fileName
+      const files = await FilesStoreModel.find()
+      console.log('files-------->>>>>--------', files)
+      return files
     } catch (error) {
-      throw new Error(`Failed to get file for post ${postId}: ${error.message}`)
+      throw new Error(`Failed to get files: ${error.message}`)
     }
   }
 
@@ -49,10 +51,8 @@ class FileService {
   }
 
   async createFiles(fileDocs) {
-    console.log('fileDocs ------>>>>>>>>>>>', fileDocs)
     try {
       const result = await FilesStoreModel.insertMany(fileDocs)
-      console.log('result 55555555555555555', result)
       return {
         success: true,
         message: 'Files uploaded successfully',
@@ -63,14 +63,66 @@ class FileService {
     }
   }
 
-  async deleteFile(file) {
+  // async deleteFiles(files) {
+  //   const { data } = files
+  //   console.log('file=======>>>>>>>>', data)
+  //   try {
+  //     // await FileModel.deleteOne(file).then((res) => console.log(res))
+  //     await FilesStoreModel.deleteMany({
+  //       _id: { $in: data },
+  //     })
+  //   } catch (err) {
+  //     console.error(err)
+  //   }
+  // }
+
+  async downloadFile(fileId, res) {
     try {
-      // await FileModel.deleteOne(file).then((res) => console.log(res))
+      const file = await FilesStoreModel.findOne({ fileId })
+      if (file) {
+        const { filename } = file
+        const filePath = path.join(UPLOAD_DIR, filename)
+        console.log('file ------------>>>>>>>>>>', file)
+        console.log('filePath ------------>>>>>>>>>>', filePath)
+        res.sendFile(filePath, (err) => {
+          if (err) {
+            if (err.code === 'ENOENT') {
+              console.log('File not found', err)
+              // Файл не найден
+              // res.status(404).send('File not found')
+            } else {
+              console.log('File not found ===>>>>', err)
+              // Другая ошибка сервера
+              // res.status(500).send('Error sending file')
+            }
+          }
+        })
+      }
+    } catch (error) {
+      throw new Error(`Failed to download file: ${error.message}`)
+    }
+  }
+
+  async deleteFiles(files) {
+    const { data } = files
+    try {
+      const filesToDelete = await FilesStoreModel.find({
+        _id: { $in: data },
+      })
+
+      const deletePromises = filesToDelete.map((file) =>
+        unlinkAsync(file.path).catch((err) =>
+          console.error(`Failed to delete file: ${file.path}`, err),
+        ),
+      )
+      await Promise.all(deletePromises)
+
       await FilesStoreModel.deleteMany({
-        _id: { $in: ['668e5967b1a684835129d051', '668e5967b1a684835129d052'] },
+        _id: { $in: data },
       })
     } catch (err) {
       console.error(err)
+      throw new Error(`Failed to delete files: ${err.message}`)
     }
   }
 }

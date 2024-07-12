@@ -1,12 +1,13 @@
 import React, { useContext, useState } from 'react'
+
 import {
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   TextField,
-} from '@material-ui/core'
-import { Button } from '@mui/material'
+} from '@mui/material'
 import { PostContext, UserContext } from 'index'
 
 import '../../../app/styles/styles.css'

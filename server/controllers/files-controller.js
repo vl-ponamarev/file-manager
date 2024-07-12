@@ -27,27 +27,10 @@ class FilesController {
     }
   }
 
-  async getPosts(req, res, next) {
+  async getFiles(req, res, next) {
     try {
-      const limit = 20
-      const offset = 0
-      const posts = await PostService.getLimitPosts(limit, offset)
-      const postsWithFiles = await Promise.all(
-        posts.map(async (post) => {
-          const file = await FileService.getFileByPostId(post._id.toHexString())
-          const user = await userService.getUserById(post.author.toHexString())
-          return {
-            _id: post._doc._id,
-            title: post._doc.title,
-            content: post._doc.content,
-            publicationDate: post._doc.publicationDate,
-
-            file,
-            user: user.email,
-          }
-        }),
-      )
-      return res.json(postsWithFiles)
+      const files = await FileService.getFiles()
+      return res.json(files)
     } catch (error) {
       next(error)
     }
@@ -80,16 +63,23 @@ class FilesController {
     }
   }
 
-  async deleteOnePost(req, res, next) {
+  async deleteFiles(req, res, next) {
     try {
-      const file = await FileService.getFileByPostId(req.body)
-      await PostService.deletePost(req.body)
-      await FileService.deleteFile({ fileName: file })
+      console.log('req.body------>>>>>>>', req.body)
+      await FileService.deleteFiles(req.body)
       return res.sendStatus(200)
     } catch (e) {
       next(e)
     }
   }
-}
 
+  async downloadFile(req, res, next) {
+    try {
+      const file = await FileService.downloadFile(req.params.fileId, res)
+      res.download(file)
+    } catch (e) {
+      next(e)
+    }
+  }
+}
 module.exports = new FilesController()

@@ -4,14 +4,16 @@ import { PostContext } from 'index'
 import CardItem from 'shared/ui/card/Card'
 import '../../app/styles/styles.css'
 import { CreatePost } from 'features/post/createPost'
-import Lightbox from 'react-image-lightbox'
-import 'react-image-lightbox/style.css'
+// import Lightbox from 'react-image-lightbox'
+// import 'react-image-lightbox/style.css'
 import { Button } from '@mui/material'
 import PaginationOutlined from 'features/post/pagination/ui/Pagination'
 import countPages from 'features/post/pagination/lib/countPages'
 import elementsToRender from 'features/post/pagination/lib/elementsToRender'
 import Logout from 'entities/logout/Logout'
 import UploadFile from 'features/uploadFile/UploadFile'
+import FilesFolders from 'features/files-folders/FilesFolders'
+import DataTable from 'entities/files/data-table/DataTable'
 
 const MainPage = observer(() => {
   const { postStore } = useContext(PostContext)
@@ -61,12 +63,14 @@ const MainPage = observer(() => {
           page={page}
           onChange={handlePageChange}
         />
-        {isOpen && (
+        <DataTable />
+        <FilesFolders />
+        {/* {isOpen && (
           <Lightbox
             mainSrc={selectedImage}
             onCloseRequest={() => setIsOpen(false)}
           />
-        )}
+        )} */}
         <div className=" gridContainer">
           {posts.map((el) => (
             <CardItem
