@@ -8,8 +8,6 @@ const FileWrapper = styled.div`
   align-items: center;
   padding: 8px;
   margin: 4px;
-  border: 1px solid gray;
-  border-radius: 4px;
   cursor: pointer;
   background-color: ${(props) => (props.isDragging ? '#f0f0f0' : 'white')};
 `

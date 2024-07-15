@@ -1,6 +1,5 @@
 import React from 'react'
 
-// import { Delete as DeleteIcon } from '@material-ui/icons'
 import {
   IconButton,
   Table,
@@ -10,7 +9,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
-import { Delete } from '@mui/icons-material'
+import { Delete as DeleteIcon } from '@mui/icons-material'
 
 const data = [
   { id: 1, name: 'John Brown', age: 32 },
@@ -26,7 +25,7 @@ const columns = [
 
 const DataTable = () => {
   const handleDelete = (id) => {
-    // Добавьте логику удаления данных здесь
+    console.log(id)
   }
 
   return (
@@ -45,17 +44,8 @@ const DataTable = () => {
               <TableCell>{row.name}</TableCell>
               <TableCell>{row.age}</TableCell>
               <TableCell>
-                {typeof row.actions === 'string' ? (
-                  <div dangerouslySetInnerHTML={{ __html: row.actions }} />
-                ) : (
-                  <IconButton onClick={() => handleDelete(row.id)}>
-                    <Delete />
-                  </IconButton>
-                )}
-              </TableCell>
-              <TableCell>
                 <IconButton onClick={() => handleDelete(row.id)}>
-                  <Delete />
+                  <DeleteIcon />
                 </IconButton>
               </TableCell>
             </TableRow>

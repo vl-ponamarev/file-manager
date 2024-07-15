@@ -1,16 +1,12 @@
-// Folder.js
 import React from 'react'
 import { useDrop } from 'react-dnd'
 import styled from 'styled-components'
-import File from '../File/File'
+import File from 'entities/files/File/File'
 
 const FolderWrapper = styled.div`
-  border: 1px solid blue;
   padding: 16px;
-  margin: 8px;
-  border-radius: 4px;
-  background-color: ${(props) => (props.isOver ? '#e0f7fa' : 'white')};
-  cursor: pointer;
+  border: 1px solid black;
+  margin: 4px;
 `
 
 const Folder = ({ folder, onDrop }) => {
@@ -23,13 +19,14 @@ const Folder = ({ folder, onDrop }) => {
   })
 
   return (
-    <FolderWrapper ref={drop} isOver={isOver}>
-      <h3>📁 {folder.name}</h3>
-      <div>
-        {folder.files.map((file) => (
-          <File key={file.id} file={file} />
-        ))}
-      </div>
+    <FolderWrapper
+      ref={drop}
+      style={{ backgroundColor: isOver ? 'lightgreen' : 'white' }}
+    >
+      <h3>{folder.name}</h3>
+      {folder.files.map((file) => (
+        <File key={file.id} file={file} />
+      ))}
     </FolderWrapper>
   )
 }
