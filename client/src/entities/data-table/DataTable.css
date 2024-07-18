@@ -1,0 +1,30 @@
+/* DataTable.css */
+.ant-table-wrapper .ant-table-cell {
+  position: relative;
+}
+
+.ant-table-wrapper .ant-table-row:hover .ant-checkbox-wrapper,
+.ant-table-wrapper .ant-checkbox-wrapper .ant-checkbox-checked {
+  visibility: visible;
+}
+
+.ant-checkbox-wrapper {
+  visibility: hidden;
+}
+
+/* Сделать checkbox "Select all" всегда видимым */
+.ant-checkbox.ant-wave-target
+  input[aria-label='Select all']
+  + .ant-checkbox-inner {
+  visibility: visible !important;
+}
+
+.ant-checkbox.ant-wave-target
+  input[aria-label='Select all']
+  + .ant-checkbox-inner::after {
+  visibility: visible !important;
+}
+
+.ant-checkbox.ant-wave-target input[aria-label='Select all'] {
+  visibility: visible !important;
+}

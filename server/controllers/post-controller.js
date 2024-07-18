@@ -1,4 +1,4 @@
-const FileService = require('../service/file-service')
+const DataService = require('../service/data-service')
 const PostService = require('../service/post-service')
 const userService = require('../service/user-service')
 
@@ -7,7 +7,7 @@ class PostController {
     console.log('createPost', req.body)
     console.log('req.file===', req.file)
     try {
-      FileService.upload(req, res, async (err) => {
+      DataService.upload(req, res, async (err) => {
         console.log('createPost---------', req.body)
         console.log('creq.file---------', req.file)
         if (err) {
@@ -16,7 +16,7 @@ class PostController {
         if (!req.file) {
           console.log('req.body---------', req.body)
           const post = await PostService.createPost(req.body)
-          await FileService.createFile(
+          await DataService.createFile(
             post.id,
             'empty.png',
             'image.png',
@@ -26,7 +26,7 @@ class PostController {
         }
         const post = await PostService.createPost(req.body)
 
-        await FileService.createFile(
+        await DataService.createFile(
           post.id,
           req.file.filename,
           req.file.mimetype,
@@ -46,7 +46,7 @@ class PostController {
       const posts = await PostService.getLimitPosts(limit, offset)
       const postsWithFiles = await Promise.all(
         posts.map(async (post) => {
-          const file = await FileService.getFileByPostId(post._id.toHexString())
+          const file = await DataService.getFileByPostId(post._id.toHexString())
           const user = await userService.getUserById(post.author.toHexString())
           return {
             _id: post._doc._id,
@@ -68,7 +68,7 @@ class PostController {
   async editPost(req, res, next) {
     try {
       const id = { _id: req.params.id }
-      FileService.upload(req, res, async (err) => {
+      DataService.upload(req, res, async (err) => {
         if (err) {
           return next(err)
         }
@@ -77,9 +77,9 @@ class PostController {
           return res.json(post)
         }
         const post = await PostService.editPost(id, req.body)
-        const file = await FileService.getFileByPostId(req.params.id)
-        await FileService.deleteFile({ fileName: file })
-        await FileService.createFile(
+        const file = await DataService.getFileByPostId(req.params.id)
+        await DataService.deleteFile({ fileName: file })
+        await DataService.createFile(
           post.id,
           req.file.filename,
           req.file.mimetype,
@@ -94,9 +94,9 @@ class PostController {
 
   async deleteOnePost(req, res, next) {
     try {
-      const file = await FileService.getFileByPostId(req.body)
+      const file = await DataService.getFileByPostId(req.body)
       await PostService.deletePost(req.body)
-      await FileService.deleteFile({ fileName: file })
+      await DataService.deleteFile({ fileName: file })
       return res.sendStatus(200)
     } catch (e) {
       next(e)

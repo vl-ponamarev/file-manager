@@ -1,10 +1,10 @@
-const FileService = require('../service/file-service')
+const DataService = require('../service/data-service')
 const userService = require('../service/user-service')
 
-class FilesController {
+class DataController {
   async saveFiles(req, res, next) {
     try {
-      FileService.upload(req, res, async (err) => {
+      DataService.upload(req, res, async (err) => {
         if (err) {
           return next(err)
         }
@@ -19,7 +19,7 @@ class FilesController {
           mimetype: file.mimetype,
           size: file.size,
         }))
-        const result = await FileService.createFiles(fileDocs)
+        const result = await DataService.createFiles(fileDocs)
         return res.json(result)
       })
     } catch (error) {
@@ -29,7 +29,16 @@ class FilesController {
 
   async getFiles(req, res, next) {
     try {
-      const files = await FileService.getFiles()
+      const files = await DataService.getFiles()
+      return res.json(files)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async getFolders(req, res, next) {
+    try {
+      const files = await DataService.getFolders()
       return res.json(files)
     } catch (error) {
       next(error)
@@ -39,7 +48,7 @@ class FilesController {
   async editPost(req, res, next) {
     try {
       const id = { _id: req.params.id }
-      FileService.upload(req, res, async (err) => {
+      DataService.upload(req, res, async (err) => {
         if (err) {
           return next(err)
         }
@@ -48,9 +57,9 @@ class FilesController {
           return res.json(post)
         }
         const post = await PostService.editPost(id, req.body)
-        const file = await FileService.getFileByPostId(req.params.id)
-        await FileService.deleteFile({ fileName: file })
-        await FileService.createFile(
+        const file = await DataService.getFileByPostId(req.params.id)
+        await DataService.deleteFile({ fileName: file })
+        await DataService.createFile(
           post.id,
           req.file.filename,
           req.file.mimetype,
@@ -65,8 +74,7 @@ class FilesController {
 
   async deleteFiles(req, res, next) {
     try {
-      console.log('req.body------>>>>>>>', req.body)
-      await FileService.deleteFiles(req.body)
+      await DataService.deleteFiles(req.body)
       return res.sendStatus(200)
     } catch (e) {
       next(e)
@@ -75,11 +83,11 @@ class FilesController {
 
   async downloadFile(req, res, next) {
     try {
-      const file = await FileService.downloadFile(req.params.fileId, res)
+      const file = await DataService.downloadFile(req.params.fileId, res)
       res.download(file)
     } catch (e) {
       next(e)
     }
   }
 }
-module.exports = new FilesController()
+module.exports = new DataController()

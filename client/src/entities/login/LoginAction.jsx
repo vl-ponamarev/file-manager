@@ -16,10 +16,19 @@ function LoginAction() {
     }
   }, [])
 
-  console.log(userStore.user)
-
   if (userStore.isLoading) {
-    return <CircularProgress />
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <CircularProgress />
+      </div>
+    )
   }
 
   return !userStore.isAuth ? (

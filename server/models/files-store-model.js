@@ -22,6 +22,10 @@ const filesStoreSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  rootFolderId: {
+    type: Number,
+    required: true,
+  },
 })
 
 const FilesStore = mongoose.model('FilesStore', filesStoreSchema)

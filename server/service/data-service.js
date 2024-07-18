@@ -6,8 +6,9 @@ const path = require('path')
 
 const FileModel = require('../models/file-model')
 const FilesStoreModel = require('../models/files-store-model')
+const FolderModel = require('../models/folders-model')
 
-class FileService {
+class DataService {
   storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, process.env.UPLOAD_URL)
@@ -49,17 +50,24 @@ class FileService {
       throw new Error(`Failed to create file: ${error.message}`)
     }
   }
-
-  async createFiles(fileDocs) {
+  async getFolders() {
     try {
-      const result = await FilesStoreModel.insertMany(fileDocs)
+      const folders = await FolderModel.find()
+      return files
+    } catch (error) {
+      throw new Error(`Failed to get folders: ${error.message}`)
+    }
+  }
+  async createFolder(fileDocs) {
+    try {
+      const result = await FolderModel.create(folder)
       return {
         success: true,
-        message: 'Files uploaded successfully',
+        message: 'Folder created successfully',
         data: result,
       }
     } catch (error) {
-      return { success: false, error: 'Error saving files to database' }
+      return { success: false, error: 'Error saving folder to database' }
     }
   }
 
@@ -127,4 +135,4 @@ class FileService {
   }
 }
 
-module.exports = new FileService()
+module.exports = new DataService()

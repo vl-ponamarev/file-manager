@@ -26,9 +26,13 @@ router.get('/posts', authMiddleware, postController.getPosts)
 router.put('/posts/:id', postController.editPost)
 router.delete('/delete', postController.deleteOnePost)
 
-router.delete('/delete-files', filesController.deleteFiles)
-router.post('/save-files', filesController.saveFiles)
-router.get('/download-file/:fileId', filesController.downloadFile)
-router.get('/get-files', filesController.getFiles)
+router.delete('/delete-files', dataController.deleteFiles)
+router.post('/save-files', dataController.saveFiles)
+router.get('/download-file/:fileId', dataController.downloadFile)
+router.get('/get-files', dataController.getFiles)
+
+router.post('/create-folder', dataController.createFolder)
+router.get('/get-folders', dataController.getFiles)
+router.delete('/delete-folder', dataController.deleteFolder)
 
 module.exports = router

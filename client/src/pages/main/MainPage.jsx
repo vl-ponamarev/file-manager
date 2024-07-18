@@ -1,93 +1,95 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { observer } from 'mobx-react-lite'
-import { PostContext } from 'index'
-import CardItem from 'shared/ui/card/Card'
-import '../../app/styles/styles.css'
-import { CreatePost } from 'features/post/createPost'
-// import Lightbox from 'react-image-lightbox'
-// import 'react-image-lightbox/style.css'
-import { Button } from '@mui/material'
-import PaginationOutlined from 'features/post/pagination/ui/Pagination'
-import countPages from 'features/post/pagination/lib/countPages'
-import elementsToRender from 'features/post/pagination/lib/elementsToRender'
+import React from 'react'
+import { Avatar, Breadcrumb, Layout, Space, theme, Typography } from 'antd'
+import DataMenu from 'entities/data-menu/DataMenu'
+import DataTable from 'entities/data-table/DataTable'
+import iconImage from 'assets/favicon_io/favicon-32x32.png'
 import Logout from 'entities/logout/Logout'
-import UploadFile from 'features/uploadFile/UploadFile'
-import FilesFolders from 'features/files-folders/FilesFolders'
-import DataTable from 'entities/files/data-table/DataTable'
+import UploadFiles from 'features/uploadFile/UploadFiles'
+import CreateDirectory from 'features/create-directory/CreateDirectory'
+const { Header, Content, Sider } = Layout
+const { Text } = Typography
 
-const MainPage = observer(() => {
-  const { postStore } = useContext(PostContext)
-  useEffect(() => {
-    const getPosts = async () => {
-      await postStore.getPosts()
-    }
-    getPosts()
-  }, [postStore])
-
-  const [page, setPage] = useState(1)
-  const handlePageChange = (event, value) => {
-    setPage(value)
+const MainPage = () => {
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken()
+  const linkStyle = {
+    textDecoration: 'none',
+    color: 'white',
+    fontFamily: 'Monospace',
+    fontSize: 30,
+    marginLeft: 10,
   }
-
-  const [open, setOpen] = useState(false)
-  const handleClickOpen = () => {
-    setOpen(true)
-  }
-
-  const [isOpen, setIsOpen] = useState(false)
-  const [selectedImage, setSelectedImage] = useState(null)
-
-  const handleImageClick = (image) => {
-    setSelectedImage(image)
-    setIsOpen(true)
-  }
-  const pages = countPages(postStore.post.length)
-
-  const posts = useMemo(
-    () => elementsToRender(postStore.post, page),
-    [page, postStore.post],
-  )
 
   return (
-    <div className="main">
-      <div className="topContainer">
-        <div className="buttonContainer">
-          <Button variant="outlined" size="medium" onClick={handleClickOpen}>
-            Добавить пост
-          </Button>
-          {open && <CreatePost {...{ open, setOpen }} />}
-          <UploadFile />
+    <Layout>
+      <Header
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid rgba(5, 5, 5, 0.06)',
+          background: '#1976d2',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Avatar alt="icon" src={iconImage} size={40} />
+          <Text style={linkStyle}> Family File Store</Text>
         </div>
-        <PaginationOutlined
-          count={pages}
-          page={page}
-          onChange={handlePageChange}
-        />
-        <DataTable />
-        <FilesFolders />
-        {/* {isOpen && (
-          <Lightbox
-            mainSrc={selectedImage}
-            onCloseRequest={() => setIsOpen(false)}
-          />
-        )} */}
-        <div className=" gridContainer">
-          {posts.map((el) => (
-            <CardItem
-              key={el._id}
-              id={el._id}
-              title={el.title}
-              content={el.content}
-              user={el.user}
-              file={el.file}
-              date={new Date(el.publicationDate)}
-              handleImageClick={handleImageClick}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
+        <Logout />
+      </Header>
+      <Layout>
+        <Header
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            borderBottom: '1px solid rgba(5, 5, 5, 0.06)',
+            background: '#feffff',
+          }}
+        >
+          <Space>
+            <CreateDirectory />
+            <UploadFiles />
+          </Space>
+        </Header>
+        <Layout>
+          <Sider
+            width={400}
+            style={{
+              background: colorBgContainer,
+            }}
+          >
+            <DataMenu />
+          </Sider>
+          <Layout
+            style={{
+              padding: '0 24px 24px',
+            }}
+          >
+            <Breadcrumb
+              style={{
+                margin: '16px 0',
+              }}
+            >
+              <Breadcrumb.Item>Home</Breadcrumb.Item>
+              <Breadcrumb.Item>List</Breadcrumb.Item>
+              <Breadcrumb.Item>MainPage</Breadcrumb.Item>
+            </Breadcrumb>
+            <Content
+              style={{
+                padding: 24,
+                margin: 0,
+                minHeight: 280,
+                background: colorBgContainer,
+                borderRadius: borderRadiusLG,
+              }}
+            >
+              <DataTable />
+            </Content>
+          </Layout>
+        </Layout>
+      </Layout>
+    </Layout>
   )
-})
-
+}
 export default MainPage
