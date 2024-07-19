@@ -6,7 +6,7 @@ const router = new Router()
 
 const authMiddleware = require('../middlewares/auth-middleware')
 const postController = require('../controllers/post-controller')
-const filesController = require('../controllers/files-controller')
+const dataController = require('../controllers/data-controller')
 
 router.post(
   '/registration',
@@ -30,9 +30,11 @@ router.delete('/delete-files', dataController.deleteFiles)
 router.post('/save-files', dataController.saveFiles)
 router.get('/download-file/:fileId', dataController.downloadFile)
 router.get('/get-files', dataController.getFiles)
+router.get('/files/:folderId', dataController.getFilesByFolderId)
 
 router.post('/create-folder', dataController.createFolder)
-router.get('/get-folders', dataController.getFiles)
-router.delete('/delete-folder', dataController.deleteFolder)
+router.get('/get-folders', dataController.getFolders)
+router.put('/folders/:id', dataController.editFolder)
+router.delete('/folders', dataController.deleteFolders)
 
 module.exports = router

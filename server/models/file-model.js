@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 
 const fileSchema = new mongoose.Schema({
-  postId: {
+  folderId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post',
+    ref: 'Folder',
     required: true,
   },
   fileName: {
@@ -17,6 +17,10 @@ const fileSchema = new mongoose.Schema({
   originalname: {
     type: String,
     required: true,
+  },
+  dateModified: {
+    type: Date,
+    default: Date.now,
   },
 })
 

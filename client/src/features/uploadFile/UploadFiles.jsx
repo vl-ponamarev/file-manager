@@ -54,7 +54,7 @@ const UploadFileAntd = () => {
         icon={<CloudUploadOutlined />}
         onClick={handleClick}
       >
-        UPLOAD FILE
+        UPLOAD FILES
       </Button>
       <input
         ref={fileInputRef}

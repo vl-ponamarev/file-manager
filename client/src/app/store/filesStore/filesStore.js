@@ -3,6 +3,7 @@ import FilesService from 'shared/api/filesService/filesService'
 
 export default class FilesStore {
   files = []
+  folders = []
 
   constructor() {
     makeAutoObservable(this)
@@ -12,10 +13,23 @@ export default class FilesStore {
     this.files = files
   }
 
+  setFolders(folders) {
+    this.folders = folders
+  }
+
   async getFiles() {
     try {
       const response = await FilesService.getFiles()
       this.setFiles(response.data.reverse())
+    } catch (err) {
+      console.log(err.response?.data?.message)
+    }
+  }
+
+  async getFolders() {
+    try {
+      const response = await FilesService.getFolders()
+      this.setFolders(response.data.reverse())
     } catch (err) {
       console.log(err.response?.data?.message)
     }

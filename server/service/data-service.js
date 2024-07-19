@@ -36,6 +36,16 @@ class DataService {
     }
   }
 
+  async getFilesByFolderId(folderId) {
+    try {
+      const files = await FilesStoreModel.find({ folderId })
+      console.log('files-------->>>>>--------', files)
+      return files
+    } catch (error) {
+      throw new Error(`Failed to get files: ${error.message}`)
+    }
+  }
+
   async createFile(postId, fileName, fileType, originalname) {
     try {
       const file = new FileModel({
@@ -53,12 +63,12 @@ class DataService {
   async getFolders() {
     try {
       const folders = await FolderModel.find()
-      return files
+      return folders
     } catch (error) {
       throw new Error(`Failed to get folders: ${error.message}`)
     }
   }
-  async createFolder(fileDocs) {
+  async createFolder(folder) {
     try {
       const result = await FolderModel.create(folder)
       return {
@@ -67,22 +77,40 @@ class DataService {
         data: result,
       }
     } catch (error) {
-      return { success: false, error: 'Error saving folder to database' }
+      return {
+        success: false,
+        error: 'Error saving folder to database',
+        error: error,
+      }
     }
   }
 
-  // async deleteFiles(files) {
-  //   const { data } = files
-  //   console.log('file=======>>>>>>>>', data)
-  //   try {
-  //     // await FileModel.deleteOne(file).then((res) => console.log(res))
-  //     await FilesStoreModel.deleteMany({
-  //       _id: { $in: data },
-  //     })
-  //   } catch (err) {
-  //     console.error(err)
-  //   }
-  // }
+  async editFolder(folderId, folderData) {
+    try {
+      const post = await FolderModel.findByIdAndUpdate(folderId, folderData, {
+        new: true,
+        returnOriginal: false,
+      })
+      return post
+    } catch (err) {
+      return { success: false, error: 'Error editing folder in database', err }
+    }
+  }
+
+  async deleteFolders(foldersId) {
+    const { data } = foldersId
+    try {
+      const res = await FolderModel.deleteMany({ _id: { $in: data } })
+      data.forEach(async (folderId) => {
+        const filesToDelete = await this.getFilesByFolderId(folderId)
+        const res = await this.deleteFiles({ data: filesToDelete })
+        console.log('res', res)
+      })
+      return res
+    } catch (err) {
+      return { success: false, error: 'Error deleting folder in database', err }
+    }
+  }
 
   async downloadFile(fileId, res) {
     try {
@@ -90,8 +118,6 @@ class DataService {
       if (file) {
         const { filename } = file
         const filePath = path.join(UPLOAD_DIR, filename)
-        console.log('file ------------>>>>>>>>>>', file)
-        console.log('filePath ------------>>>>>>>>>>', filePath)
         res.sendFile(filePath, (err) => {
           if (err) {
             if (err.code === 'ENOENT') {

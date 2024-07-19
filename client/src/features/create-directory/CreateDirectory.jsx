@@ -3,6 +3,8 @@ import React from 'react'
 import { FolderAddOutlined } from '@ant-design/icons'
 
 const CreateDirectory = () => {
+  const date = new Date()
+  console.log(date)
   return (
     <Button
       style={{

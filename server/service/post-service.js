@@ -2,7 +2,6 @@ const PostModel = require('../models/post-model')
 
 class PostService {
   async getLimitPosts(limit, offset) {
-    console.log('----------ok----------')
     try {
       const posts = await PostModel.find().skip(offset).limit(limit).exec()
       return posts

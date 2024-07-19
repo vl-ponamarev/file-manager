@@ -5,19 +5,19 @@ const foldersSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
   rootFolderId: {
-    type: Number,
+    type: String,
+    default: 'null',
     required: true,
   },
   creationDate: {
     type: Date,
     default: Date.now,
   },
+  // files: {
+  //   type: [String],
+  //   required: true,
+  // },
 })
 
 const Folder = mongoose.model('Folder', foldersSchema)

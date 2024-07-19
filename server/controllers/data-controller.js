@@ -36,37 +36,50 @@ class DataController {
     }
   }
 
-  async getFolders(req, res, next) {
+  async getFilesByFolderId(req, res, next) {
+    const folderId = req.params.folderId
+
     try {
-      const files = await DataService.getFolders()
+      const files = await DataService.getFilesByFolderId()
       return res.json(files)
     } catch (error) {
       next(error)
     }
   }
 
-  async editPost(req, res, next) {
+  async getFolders(req, res, next) {
+    try {
+      const folders = await DataService.getFolders()
+      return res.json(folders)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async createFolder(req, res, next) {
+    try {
+      const response = await DataService.createFolder(req.body)
+      console.log('response', response)
+      return response
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async editFolder(req, res, next) {
     try {
       const id = { _id: req.params.id }
-      DataService.upload(req, res, async (err) => {
-        if (err) {
-          return next(err)
-        }
-        if (!req.file) {
-          const post = await PostService.editPost(id, req.body)
-          return res.json(post)
-        }
-        const post = await PostService.editPost(id, req.body)
-        const file = await DataService.getFileByPostId(req.params.id)
-        await DataService.deleteFile({ fileName: file })
-        await DataService.createFile(
-          post.id,
-          req.file.filename,
-          req.file.mimetype,
-          req.file.originalname,
-        )
-        return res.json(post)
-      })
+      const post = await DataService.editFolder(id, req.body)
+      return res.json(post)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async deleteFolders(req, res, next) {
+    try {
+      await DataService.deleteFolders(req.body)
+      return res.sendStatus(200)
     } catch (error) {
       next(error)
     }

@@ -6,6 +6,7 @@ import iconImage from 'assets/favicon_io/favicon-32x32.png'
 import Logout from 'entities/logout/Logout'
 import UploadFiles from 'features/uploadFile/UploadFiles'
 import CreateDirectory from 'features/create-directory/CreateDirectory'
+import { observer } from 'mobx-react-lite'
 const { Header, Content, Sider } = Layout
 const { Text } = Typography
 
@@ -92,4 +93,4 @@ const MainPage = () => {
     </Layout>
   )
 }
-export default MainPage
+export default observer(MainPage)
