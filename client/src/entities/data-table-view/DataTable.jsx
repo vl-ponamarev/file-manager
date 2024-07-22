@@ -1,45 +1,39 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Table, Menu, Dropdown, Checkbox } from 'antd'
 import './DataTable.css'
+import { FilesContext } from 'index'
+import { v4 as uuidv4 } from 'uuid'
+import dayjs from 'dayjs'
+import { observer } from 'mobx-react-lite'
 
 const columns = [
   {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
+    title: 'Name',
+    dataIndex: 'dataName',
+    key: 'dataName',
+    sorter: (a, b) => a.dataName.localeCompare(b.dataName),
   },
   {
-    title: 'First name',
-    dataIndex: 'firstName',
-    key: 'firstName',
+    title: 'Data Modified',
+    dataIndex: 'dataModified',
+    key: 'dataModified',
+    sorter: (a, b) =>
+      dayjs(a.dataModified).isBefore(dayjs(b.dataModified)) ? -1 : 1,
   },
   {
-    title: 'Last name',
-    dataIndex: 'lastName',
-    key: 'lastName',
+    title: 'File Size',
+    dataIndex: 'fileSize',
+    key: 'fileSize',
+    sorter: (a, b) => a.age - b.age,
   },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-  },
-]
-
-const initialData = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
 ]
 
 const DataTable = () => {
+  const { filesStore } = useContext(FilesContext)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [contextMenu, setContextMenu] = useState(null)
+  const [selectedRowId, setSelectedRowId] = useState(null)
+  const [initialData, setInitialData] = useState(null)
 
   const onSelectChange = (selectedRowKeys) => {
     setSelectedRowKeys(selectedRowKeys)
@@ -57,6 +51,31 @@ const DataTable = () => {
         : null,
     )
   }
+
+  useEffect(() => {
+    console.log('filesStore.folders', filesStore.folders)
+    if (filesStore && filesStore.folders) {
+      const rootFolders = filesStore.folders
+        .filter((item) => item.rootFolderId === 'null')
+        .sort((a, b) => a.foldername.localeCompare(b.foldername))
+        .map((item) => {
+          return {
+            dataName: item.foldername,
+            dataModified: item.creationDate,
+            fileSize: '',
+            id: uuidv4(),
+          }
+        })
+
+      console.log('rootFolders', rootFolders)
+      const rootFiles = filesStore.files.filter(
+        (item) => item.rootFolderId === 'null',
+      )
+      setInitialData(rootFolders)
+    }
+  }, [filesStore.folders])
+
+  console.log('filesStore.folders', filesStore.folders)
 
   const handleMenuClick = (action) => {
     console.log(`Action: ${action}, Selected Rows: ${selectedRowKeys}`)
@@ -87,21 +106,6 @@ const DataTable = () => {
       />
     ),
   }
-
-  const items = [
-    {
-      label: '1st menu item',
-      key: '1',
-    },
-    {
-      label: '2nd menu item',
-      key: '2',
-    },
-    {
-      label: '3rd menu item',
-      key: '3',
-    },
-  ]
 
   const menu = (
     <Menu>
@@ -140,12 +144,23 @@ const DataTable = () => {
               }
             />
           ),
+          onCell: (record, rowIndex) => console.log(record, rowIndex),
         }}
         columns={columns}
         dataSource={initialData}
-        onRow={(record) => ({
-          onContextMenu: (event) => handleRowContextMenu(event, record),
-        })}
+        rowClassName={(record, index) => {
+          console.log(record, index)
+          return record.id === selectedRowId ? 'selected-row' : ''
+        }}
+        onRow={(record, index) => {
+          return {
+            onContextMenu: (event) => handleRowContextMenu(event, record),
+            onClick: () => {
+              console.log(record)
+              setSelectedRowId(record.id)
+            },
+          }
+        }}
         rowKey="id"
       />
       {contextMenu && (
@@ -173,4 +188,4 @@ const DataTable = () => {
   )
 }
 
-export default DataTable
+export default observer(DataTable)

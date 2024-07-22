@@ -46,18 +46,13 @@ class DataService {
     }
   }
 
-  async createFile(postId, fileName, fileType, originalname) {
+  async createMultipleFiles(files) {
+    console.log('files!!!!!!!!!!!!', files)
     try {
-      const file = new FileModel({
-        postId,
-        fileName,
-        fileType,
-        originalname,
-      })
-      await file.save()
-      return file
+      const savedFiles = await FilesStoreModel.insertMany(files)
+      return savedFiles
     } catch (error) {
-      throw new Error(`Failed to create file: ${error.message}`)
+      throw new Error(`Failed to create files: ${error.message}`)
     }
   }
   async getFolders() {

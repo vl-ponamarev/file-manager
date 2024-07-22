@@ -28,3 +28,7 @@
 .ant-checkbox.ant-wave-target input[aria-label='Select all'] {
   visibility: visible !important;
 }
+
+.selected-row {
+  background-color: #e6f4ff;
+}

@@ -10,16 +10,18 @@ class DataController {
         }
         const files = req.files
         const owner = req.body.owner
+        const folder = req.body.folder
 
         console.log('files-------->>>>>--------', files)
         const fileDocs = files?.map((file) => ({
           owner,
+          folderId: folder,
           filename: file.filename,
-          path: file.path,
           mimetype: file.mimetype,
           size: file.size,
+          originalname: file.originalname,
         }))
-        const result = await DataService.createFiles(fileDocs)
+        const result = await DataService.createMultipleFiles(fileDocs)
         return res.json(result)
       })
     } catch (error) {

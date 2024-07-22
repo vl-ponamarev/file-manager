@@ -6,21 +6,30 @@ const fileSchema = new mongoose.Schema({
     ref: 'Folder',
     required: true,
   },
-  fileName: {
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  filename: {
     type: String,
     required: true,
   },
-  fileType: {
+  mimetype: {
     type: String,
     required: true,
   },
-  originalname: {
+  size: {
     type: String,
     required: true,
   },
   dateModified: {
     type: Date,
     default: Date.now,
+  },
+  originalname: {
+    type: String,
+    required: true,
   },
 })
 

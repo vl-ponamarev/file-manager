@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { FolderOutlined, MenuFoldOutlined } from '@ant-design/icons'
-import { Button, Dropdown, Menu } from 'antd'
+import { FolderOutlined } from '@ant-design/icons'
+import { Menu } from 'antd'
 import { FilesContext } from 'index'
 import './DataMenu.css'
+import DropdownMenu from './ui/DropdownMenu'
 
 const DataMenu = () => {
   const { filesStore } = useContext(FilesContext)
@@ -13,8 +14,6 @@ const DataMenu = () => {
   useEffect(() => {
     filesStore.getFolders()
   }, [])
-
-  // const { setOpenFolder } = filesStore
 
   useEffect(() => {
     console.log('folders', filesStore.folders)
@@ -42,22 +41,10 @@ const DataMenu = () => {
               <div className="menu-item-wrapper">
                 {obj.foldername}
                 <div className="menu-item-dropdown">
-                  <Dropdown
-                    overlay={
-                      <Menu>
-                        <Menu.Item key={`${item._id}-option1`}>
-                          Option 1
-                        </Menu.Item>
-                        <Menu.Item key={`${item._id}-option2`}>
-                          Option 2
-                        </Menu.Item>
-                      </Menu>
-                    }
-                  >
-                    <Button type="link" onClick={(e) => e.preventDefault()}>
-                      <MenuFoldOutlined style={{ fontSize: '20px' }} />
-                    </Button>
-                  </Dropdown>
+                  <DropdownMenu
+                    handleMenuClick={handleMenuClick}
+                    id={item._id}
+                  />
                 </div>
               </div>
             ),
@@ -71,22 +58,10 @@ const DataMenu = () => {
               <div className="menu-item-wrapper">
                 {obj.foldername}
                 <div className="menu-item-dropdown">
-                  <Dropdown
-                    overlay={
-                      <Menu>
-                        <Menu.Item key={`${item._id}-option1`}>
-                          Option 1
-                        </Menu.Item>
-                        <Menu.Item key={`${item._id}-option2`}>
-                          Option 2
-                        </Menu.Item>
-                      </Menu>
-                    }
-                  >
-                    <Button type="link" onClick={(e) => e.preventDefault()}>
-                      <MenuFoldOutlined style={{ fontSize: '20px' }} />
-                    </Button>
-                  </Dropdown>
+                  <DropdownMenu
+                    handleMenuClick={handleMenuClick}
+                    id={item._id}
+                  />
                 </div>
               </div>
             ),
@@ -94,13 +69,28 @@ const DataMenu = () => {
           })
         }
       })
-      setItems(roots)
+
+      const rootFolder = {
+        key: 'root',
+        label: 'Files',
+        icon: <FolderOutlined />,
+        children: roots,
+      }
+
+      setItems([rootFolder])
 
       console.log('roots', roots)
     }
     console.log([filesStore.createdFolder])
     setSelectedKeys([filesStore.createdFolder])
   }, [filesStore.folders])
+
+  const handleMenuClick = (e) => {
+    console.log('Clicked menu item key:', e.key)
+
+    e.domEvent.stopPropagation()
+    // Здесь вы можете выполнять действия на основе значения e.key
+  }
 
   useEffect(() => {
     if (selectedKeys.length > 0) {
@@ -128,15 +118,16 @@ const DataMenu = () => {
   }
 
   const onSelect = (openKeys) => {
-    // console.log('openKeys', openKeys)
+    console.log('openKeys', openKeys)
   }
 
   return (
     <Menu
       onClick={onClick}
       onOpenChange={onOpenChange}
-      onSelect={onSelect}
-      openKeys={[filesStore.openFolder]}
+      // onSelect={onSelect}
+      // openKeys={[filesStore.openFolder]}
+      defaultOpenKeys={['root']}
       style={{
         width: 400,
       }}

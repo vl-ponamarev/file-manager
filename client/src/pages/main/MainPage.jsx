@@ -1,12 +1,22 @@
 import React from 'react'
-import { Avatar, Breadcrumb, Layout, Space, theme, Typography } from 'antd'
+import {
+  Avatar,
+  Breadcrumb,
+  Col,
+  Layout,
+  Row,
+  Space,
+  theme,
+  Typography,
+} from 'antd'
 import DataMenu from 'entities/data-menu/DataMenu'
-import DataTable from 'entities/data-table/DataTable'
+import DataTable from 'entities/data-table-view/DataTable'
 import iconImage from 'assets/favicon_io/favicon-32x32.png'
 import Logout from 'entities/logout/Logout'
 import UploadFiles from 'features/uploadFile/UploadFiles'
 import CreateDirectory from 'features/create-directory/CreateDirectory'
 import { observer } from 'mobx-react-lite'
+import { DataViewButton } from 'shared/ui/button'
 const { Header, Content, Sider } = Layout
 const { Text } = Typography
 
@@ -21,6 +31,8 @@ const MainPage = () => {
     fontSize: 30,
     marginLeft: 10,
   }
+
+  const [param, setParam] = React.useState(true)
 
   return (
     <Layout>
@@ -73,15 +85,32 @@ const MainPage = () => {
               flex: 1,
             }}
           >
-            <Breadcrumb
-              style={{
-                margin: '16px 0',
-              }}
-            >
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
-              <Breadcrumb.Item>List</Breadcrumb.Item>
-              <Breadcrumb.Item>MainPage</Breadcrumb.Item>
-            </Breadcrumb>
+            <Row>
+              <Col span={8}>
+                {' '}
+                <Breadcrumb
+                  style={{
+                    margin: '16px 0',
+                  }}
+                >
+                  <Breadcrumb.Item>Home</Breadcrumb.Item>
+                  <Breadcrumb.Item>List</Breadcrumb.Item>
+                  <Breadcrumb.Item>MainPage</Breadcrumb.Item>
+                </Breadcrumb>
+              </Col>
+              <Col
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                }}
+                span={8}
+                offset={8}
+              >
+                <DataViewButton setParam={setParam} param={param} />
+              </Col>
+            </Row>
+
             <Content
               style={{
                 padding: 24,
