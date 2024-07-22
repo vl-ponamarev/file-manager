@@ -4,6 +4,8 @@ import FilesService from 'shared/api/filesService/filesService'
 export default class FilesStore {
   files = []
   folders = []
+  openFolder = []
+  createdFolder = []
 
   constructor() {
     makeAutoObservable(this)
@@ -15,6 +17,14 @@ export default class FilesStore {
 
   setFolders(folders) {
     this.folders = folders
+  }
+
+  setOpenFolder(openFolder) {
+    this.openFolder = openFolder
+  }
+
+  setCreatedFolder(createdFolder) {
+    this.createdFolder = createdFolder
   }
 
   async getFiles() {
@@ -30,6 +40,19 @@ export default class FilesStore {
     try {
       const response = await FilesService.getFolders()
       this.setFolders(response.data.reverse())
+    } catch (err) {
+      console.log(err.response?.data?.message)
+    }
+  }
+
+  async createFolder(folderData) {
+    try {
+      const response = await FilesService.createFolder(folderData)
+      if (response.data.success) {
+        this.setCreatedFolder(response.data.data._id)
+        console.log(response)
+        this.getFolders()
+      }
     } catch (err) {
       console.log(err.response?.data?.message)
     }

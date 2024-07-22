@@ -53,11 +53,16 @@ const MainPage = () => {
             <UploadFiles />
           </Space>
         </Header>
-        <Layout>
+        <Layout
+          style={{
+            height: '100%',
+          }}
+        >
           <Sider
             width={400}
             style={{
               background: colorBgContainer,
+              flex: '0 0 255px',
             }}
           >
             <DataMenu />
@@ -65,6 +70,7 @@ const MainPage = () => {
           <Layout
             style={{
               padding: '0 24px 24px',
+              flex: 1,
             }}
           >
             <Breadcrumb
@@ -80,7 +86,7 @@ const MainPage = () => {
               style={{
                 padding: 24,
                 margin: 0,
-                minHeight: 280,
+                minHeight: '78vh',
                 background: colorBgContainer,
                 borderRadius: borderRadiusLG,
               }}

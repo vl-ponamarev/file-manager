@@ -60,7 +60,7 @@ class DataController {
     try {
       const response = await DataService.createFolder(req.body)
       console.log('response', response)
-      return response
+      return res.json(response)
     } catch (error) {
       next(error)
     }

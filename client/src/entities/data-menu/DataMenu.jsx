@@ -1,99 +1,24 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-
-import {
-  AppstoreOutlined,
-  MailOutlined,
-  SettingOutlined,
-  FolderOutlined,
-} from '@ant-design/icons'
-import { Menu } from 'antd'
+import { FolderOutlined, MenuFoldOutlined } from '@ant-design/icons'
+import { Button, Dropdown, Menu } from 'antd'
 import { FilesContext } from 'index'
-const itemss = [
-  {
-    key: 'grp',
-    label: 'Group',
-    type: 'group',
-    children: [
-      {
-        key: 'sub1',
-        label: 'Navigation One',
-        icon: <MailOutlined />,
-        children: [
-          {
-            key: '13',
-            label: 'Option 13',
-          },
-          {
-            key: '14',
-            label: 'Option 14',
-          },
-        ],
-      },
-      {
-        key: 'sub4',
-        label: 'Navigation Three',
-        icon: <SettingOutlined />,
-        children: [
-          {
-            key: '9',
-            label: 'Option 9',
-          },
-          {
-            key: '10',
-            label: 'Option 10',
-          },
-          {
-            key: '11',
-            label: 'Option 11',
-          },
-          {
-            key: '12',
-            label: 'Option 12',
-          },
-        ],
-      },
-    ],
-  },
-]
+import './DataMenu.css'
+
 const DataMenu = () => {
   const { filesStore } = useContext(FilesContext)
-
   const [items, setItems] = useState([])
-
-  console.log('folders', filesStore.folders)
+  const [selectedKeys, setSelectedKeys] = useState([])
 
   useEffect(() => {
     filesStore.getFolders()
   }, [])
 
+  // const { setOpenFolder } = filesStore
+
   useEffect(() => {
     console.log('folders', filesStore.folders)
-    const newItemsData = new Map()
     if (filesStore.folders) {
-      console.log('folders', filesStore.folders)
-      //   filesStore.folders.forEach((folder) => {
-      //     const children = filesStore.folders.filter(
-      //       (file) => file.rootFolderId === folder._id,
-      //     )
-      //     if (newItemsData.has(folder._id)) return
-      //     newItemsData.set(folder._id, {
-      //       key: folder._id,
-      //       label: folder.foldername,
-      //       icon: <FolderOutlined />,
-      //       // type: 'group',
-      //       children:
-      //         children.length > 0
-      //           ? children.map((childFolder) => ({
-      //               key: childFolder._id,
-      //               label: childFolder.foldername,
-      //               icon: <FolderOutlined />,
-      //               // type: 'group',
-      //             }))
-      //           : null,
-      //     })
-      //   })
-
       const map = {}
       const roots = []
 
@@ -107,54 +32,103 @@ const DataMenu = () => {
       filesStore.folders.forEach((item) => {
         if (item.rootFolderId !== 'null') {
           console.log('map[item.rootFolderId]', map[item.rootFolderId])
-          map[item.rootFolderId]?.children.push(map[item._id])
+          const obj = map[item._id]
+          console.log('obj', obj)
+          map[item.rootFolderId]?.children.push({
+            children: obj.children.length > 0 ? obj.children : null,
+            key: obj._id,
+            icon: <FolderOutlined />,
+            label: (
+              <div className="menu-item-wrapper">
+                {obj.foldername}
+                <div className="menu-item-dropdown">
+                  <Dropdown
+                    overlay={
+                      <Menu>
+                        <Menu.Item key={`${item._id}-option1`}>
+                          Option 1
+                        </Menu.Item>
+                        <Menu.Item key={`${item._id}-option2`}>
+                          Option 2
+                        </Menu.Item>
+                      </Menu>
+                    }
+                  >
+                    <Button type="link" onClick={(e) => e.preventDefault()}>
+                      <MenuFoldOutlined style={{ fontSize: '20px' }} />
+                    </Button>
+                  </Dropdown>
+                </div>
+              </div>
+            ),
+          })
         } else {
-          roots.push(map[item._id])
+          const obj = map[item._id]
+          roots.push({
+            children: obj.children.length > 0 ? obj.children : null,
+            key: obj._id,
+            label: (
+              <div className="menu-item-wrapper">
+                {obj.foldername}
+                <div className="menu-item-dropdown">
+                  <Dropdown
+                    overlay={
+                      <Menu>
+                        <Menu.Item key={`${item._id}-option1`}>
+                          Option 1
+                        </Menu.Item>
+                        <Menu.Item key={`${item._id}-option2`}>
+                          Option 2
+                        </Menu.Item>
+                      </Menu>
+                    }
+                  >
+                    <Button type="link" onClick={(e) => e.preventDefault()}>
+                      <MenuFoldOutlined style={{ fontSize: '20px' }} />
+                    </Button>
+                  </Dropdown>
+                </div>
+              </div>
+            ),
+            icon: <FolderOutlined />,
+          })
         }
       })
+      setItems(roots)
 
       console.log('roots', roots)
     }
-
-    // const valuesArray = Array.from(newItemsData.values())
-    // const tree = buildTree(filesStore.folders)
-    // setItems(tree)
-    // console.log('tree', tree)
+    console.log([filesStore.createdFolder])
+    setSelectedKeys([filesStore.createdFolder])
   }, [filesStore.folders])
 
-  const buildTree = (data) => {
-    const map = {}
-    const roots = []
+  useEffect(() => {
+    if (selectedKeys.length > 0) {
+      console.log(selectedKeys)
+      const key =
+        selectedKeys.length > 1
+          ? selectedKeys[selectedKeys.length - 1]
+          : selectedKeys[0]
+      filesStore.setOpenFolder(key)
+    } else {
+      filesStore.setOpenFolder([])
+    }
+  }, [selectedKeys])
 
-    // Создаем словарь объектов по их id
-    data.forEach((item) => {
-      console.log('item', item)
-      map[item._id] = { ...item, children: [] }
-    })
-    console.log('map', map)
-    // Заполняем массив children для каждого объекта
-    data.forEach((item) => {
-      if (item.rootFolderId !== 'null') {
-        console.log('map[item.rootFolderId]', map[item.rootFolderId])
-        map[item.rootFolderId]?.children.push(map[item._id])
-      } else {
-        roots.push(map[item._id])
-      }
-    })
-
-    return roots
-  }
+  console.log(filesStore.openFolder)
 
   const onClick = (e) => {
     console.log('click ', e)
+    setSelectedKeys([e.key])
   }
 
   const onOpenChange = (openKeys) => {
     console.log('openKeys', openKeys)
+    setSelectedKeys(openKeys)
   }
 
   const onSelect = (openKeys) => {
-    console.log('openKeys', openKeys)
+    // console.log('openKeys', openKeys)
   }
 
   return (
@@ -162,11 +136,11 @@ const DataMenu = () => {
       onClick={onClick}
       onOpenChange={onOpenChange}
       onSelect={onSelect}
+      openKeys={[filesStore.openFolder]}
       style={{
-        width: 256,
+        width: 400,
       }}
-      // defaultSelectedKeys={['1']}
-      // defaultOpenKeys={['sub1']}
+      selectedKeys={selectedKeys}
       mode="inline"
       items={items}
       selectable={true}

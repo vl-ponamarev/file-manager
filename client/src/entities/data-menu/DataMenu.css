@@ -1,0 +1,13 @@
+.menu-item-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-item-dropdown {
+  display: none;
+}
+
+.menu-item-wrapper:hover .menu-item-dropdown {
+  display: flex;
+}
