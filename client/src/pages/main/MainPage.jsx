@@ -10,13 +10,13 @@ import {
   Typography,
 } from 'antd'
 import DataMenu from 'entities/data-menu/DataMenu'
-import DataTable from 'entities/data-table-view/DataTable'
 import iconImage from 'assets/favicon_io/favicon-32x32.png'
 import Logout from 'entities/logout/Logout'
 import UploadFiles from 'features/uploadFile/UploadFiles'
 import CreateDirectory from 'features/create-directory/CreateDirectory'
 import { observer } from 'mobx-react-lite'
 import { DataViewButton } from 'shared/ui/button'
+import DataViewComponent from 'features/data-view-component/DataViewComponent'
 const { Header, Content, Sider } = Layout
 const { Text } = Typography
 
@@ -120,7 +120,7 @@ const MainPage = () => {
                 borderRadius: borderRadiusLG,
               }}
             >
-              <DataTable />
+              <DataViewComponent param={param} />
             </Content>
           </Layout>
         </Layout>

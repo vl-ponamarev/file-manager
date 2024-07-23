@@ -2,11 +2,18 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Table, Menu, Dropdown, Checkbox } from 'antd'
 import './DataTable.css'
 import { FilesContext } from 'index'
-import { v4 as uuidv4 } from 'uuid'
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react-lite'
+import { FolderOutlined } from '@ant-design/icons'
 
 const columns = [
+  {
+    title: '',
+    dataIndex: 'icon',
+    key: 'icon',
+    render: () => <FolderOutlined dataIndex={'key'} />,
+    width: '2%',
+  },
   {
     title: 'Name',
     dataIndex: 'dataName',
@@ -28,12 +35,14 @@ const columns = [
   },
 ]
 
-const DataTable = () => {
+const DataTable = ({ initialData }) => {
   const { filesStore } = useContext(FilesContext)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [contextMenu, setContextMenu] = useState(null)
   const [selectedRowId, setSelectedRowId] = useState(null)
-  const [initialData, setInitialData] = useState(null)
+  // const [initialData, setInitialData] = useState(null)
+
+  console.log('initialData', initialData)
 
   const onSelectChange = (selectedRowKeys) => {
     setSelectedRowKeys(selectedRowKeys)
@@ -51,31 +60,6 @@ const DataTable = () => {
         : null,
     )
   }
-
-  useEffect(() => {
-    console.log('filesStore.folders', filesStore.folders)
-    if (filesStore && filesStore.folders) {
-      const rootFolders = filesStore.folders
-        .filter((item) => item.rootFolderId === 'null')
-        .sort((a, b) => a.foldername.localeCompare(b.foldername))
-        .map((item) => {
-          return {
-            dataName: item.foldername,
-            dataModified: item.creationDate,
-            fileSize: '',
-            id: uuidv4(),
-          }
-        })
-
-      console.log('rootFolders', rootFolders)
-      const rootFiles = filesStore.files.filter(
-        (item) => item.rootFolderId === 'null',
-      )
-      setInitialData(rootFolders)
-    }
-  }, [filesStore.folders])
-
-  console.log('filesStore.folders', filesStore.folders)
 
   const handleMenuClick = (action) => {
     console.log(`Action: ${action}, Selected Rows: ${selectedRowKeys}`)
@@ -144,20 +128,28 @@ const DataTable = () => {
               }
             />
           ),
-          onCell: (record, rowIndex) => console.log(record, rowIndex),
+          // onCell: (record, rowIndex) => console.log(record, rowIndex),
         }}
         columns={columns}
         dataSource={initialData}
         rowClassName={(record, index) => {
-          console.log(record, index)
+          // console.log(record, index)
           return record.id === selectedRowId ? 'selected-row' : ''
         }}
         onRow={(record, index) => {
           return {
             onContextMenu: (event) => handleRowContextMenu(event, record),
             onClick: () => {
+              console.log(record.id)
               console.log(record)
-              setSelectedRowId(record.id)
+              const { id } = record
+
+              if (id) {
+                console.log('ok')
+                setSelectedRowId(id)
+                filesStore.setOpenFolder(id)
+                filesStore.setSelectedKeys([id])
+              }
             },
           }
         }}

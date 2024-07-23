@@ -22,6 +22,7 @@ const DropdownMenu = ({ handleMenuClick, id }) => {
               <span>New directory</span>
             </Space>
           </Menu.Item>
+
           <Menu.Item key={`${id} upload`}>
             <Space>
               <UploadOutlined />

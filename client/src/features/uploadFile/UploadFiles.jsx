@@ -3,6 +3,7 @@ import { CloudUploadOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { UserContext, FilesContext } from 'index'
 import { useEffect } from 'react'
+import { observer } from 'mobx-react-lite'
 
 const UploadFileAntd = () => {
   const { userStore } = React.useContext(UserContext)
@@ -22,10 +23,13 @@ const UploadFileAntd = () => {
     fileInputRef.current.click()
   }
 
+  console.log(filesStore.openFolder)
+
   useEffect(() => {
     const handleSave = async () => {
       if (files && files.length > 0) {
         const fileFolder = filesStore.openFolder
+        console.log('fileFolder', fileFolder)
         const formData = new FormData()
         formData.append('owner', userStore.user.id)
         formData.append('folder', fileFolder)
@@ -43,6 +47,7 @@ const UploadFileAntd = () => {
       }
     }
     handleSave()
+    filesStore.getFiles()
   }, [files, userStore.user.id])
 
   return (
@@ -71,4 +76,4 @@ const UploadFileAntd = () => {
   )
 }
 
-export default UploadFileAntd
+export default observer(UploadFileAntd)

@@ -17,15 +17,15 @@ const FolderNameModal = ({ open, setOpen }) => {
 
   const date = new Date()
 
-  const [openFolder, setOpenFolder] = useState([])
+  // const [openFolder, setOpenFolder] = useState([])
 
-  useEffect(() => {
-    filesStore.openFolder.length > 0
-      ? setOpenFolder(filesStore.openFolder)
-      : setOpenFolder('null')
-  }, [filesStore.openFolder])
+  // useEffect(() => {
+  //   filesStore.openFolder.length > 0
+  //     ? setOpenFolder(filesStore.openFolder)
+  //     : setOpenFolder('null')
+  // }, [filesStore.openFolder])
 
-  console.log(openFolder)
+  console.log(filesStore.openFolder)
 
   const draggleRef = useRef(null)
   const showModal = () => {
@@ -35,7 +35,7 @@ const FolderNameModal = ({ open, setOpen }) => {
     // console.log(e)
     filesStore.createFolder({
       foldername: value,
-      rootFolderId: openFolder,
+      rootFolderId: filesStore.openFolder,
       creationDate: date,
     })
     setOpen(false)

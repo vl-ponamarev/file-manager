@@ -6,6 +6,7 @@ export default class FilesStore {
   folders = []
   openFolder = []
   createdFolder = []
+  selectedKeys = ''
 
   constructor() {
     makeAutoObservable(this)
@@ -19,7 +20,12 @@ export default class FilesStore {
     this.folders = folders
   }
 
+  setSelectedKeys(selectedKeys) {
+    this.selectedKeys = selectedKeys
+  }
+
   setOpenFolder(openFolder) {
+    console.log(openFolder)
     this.openFolder = openFolder
   }
 
@@ -50,7 +56,6 @@ export default class FilesStore {
       const response = await FilesService.createFolder(folderData)
       if (response.data.success) {
         this.setCreatedFolder(response.data.data._id)
-        console.log(response)
         this.getFolders()
       }
     } catch (err) {

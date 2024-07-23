@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { FolderOutlined } from '@ant-design/icons'
 import { Menu } from 'antd'
@@ -9,12 +9,17 @@ import DropdownMenu from './ui/DropdownMenu'
 const DataMenu = () => {
   const { filesStore } = useContext(FilesContext)
   const [items, setItems] = useState([])
-  const [selectedKeys, setSelectedKeys] = useState([])
+  // const [selectedKeys, setSelectedKeys] = useState([])
+
+  const rootFolder = filesStore.folders.find(
+    (item) => item.foldername === 'Files',
+  )
 
   useEffect(() => {
     filesStore.getFolders()
   }, [])
 
+  console.log('openFolder', filesStore.openFolder)
   useEffect(() => {
     console.log('folders', filesStore.folders)
     if (filesStore.folders) {
@@ -26,10 +31,15 @@ const DataMenu = () => {
         console.log('item', item)
         map[item._id] = { ...item, children: [] }
       })
+
       console.log('map', map)
-      // Заполняем массив children для каждого объекта
+      // const rootFolder = filesStore.folders.find(
+      //   (item) => item.foldername === 'Files',
+      // )
+      filesStore.setOpenFolder(rootFolder?._id)
+
       filesStore.folders.forEach((item) => {
-        if (item.rootFolderId !== 'null') {
+        if (item.rootFolderId !== rootFolder._id) {
           console.log('map[item.rootFolderId]', map[item.rootFolderId])
           const obj = map[item._id]
           console.log('obj', obj)
@@ -70,19 +80,17 @@ const DataMenu = () => {
         }
       })
 
-      const rootFolder = {
-        key: 'root',
-        label: 'Files',
+      const rootFolderPrepared = {
+        key: rootFolder?._id,
+        label: rootFolder?.foldername,
         icon: <FolderOutlined />,
         children: roots,
       }
 
-      setItems([rootFolder])
-
-      console.log('roots', roots)
+      setItems([rootFolderPrepared])
     }
-    console.log([filesStore.createdFolder])
-    setSelectedKeys([filesStore.createdFolder])
+    // console.log([filesStore.createdFolder])
+    // filesStore.setSelectedKeys([filesStore.createdFolder])
   }, [filesStore.folders])
 
   const handleMenuClick = (e) => {
@@ -92,32 +100,53 @@ const DataMenu = () => {
     // Здесь вы можете выполнять действия на основе значения e.key
   }
 
+  const ref = useRef(filesStore.selectedKeys)
+
+  console.log(ref.current)
+
   useEffect(() => {
-    if (selectedKeys.length > 0) {
-      console.log(selectedKeys)
-      const key =
-        selectedKeys.length > 1
-          ? selectedKeys[selectedKeys.length - 1]
-          : selectedKeys[0]
-      filesStore.setOpenFolder(key)
+    console.log(filesStore.selectedKeys)
+    console.log(filesStore.selectedKeys.length)
+    if (filesStore?.selectedKeys?.length === 0) {
+      console.log('ok')
+      filesStore.setOpenFolder(rootFolder?._id)
+    } else if (filesStore?.selectedKeys?.length > 1) {
+      console.log('oks')
+      filesStore.setOpenFolder(
+        filesStore.selectedKeys[filesStore.selectedKeys.length - 1],
+      )
     } else {
-      filesStore.setOpenFolder([])
+      console.log('oki')
+      filesStore.setOpenFolder(filesStore.selectedKeys[0])
     }
-  }, [selectedKeys])
+  }, [filesStore.selectedKeys])
 
   console.log(filesStore.openFolder)
+  console.log(filesStore.selectedKeys)
 
   const onClick = (e) => {
     console.log('click ', e)
-    setSelectedKeys([e.key])
+    filesStore.setSelectedKeys([e.key])
   }
+
+  const [allOpenKeys, setAllOpenKeys] = useState(['669f6de3daad41e24782120f'])
+  console.log(allOpenKeys)
 
   const onOpenChange = (openKeys) => {
     console.log('openKeys', openKeys)
-    setSelectedKeys(openKeys)
+    openKeys.forEach((item) => {
+      if (!allOpenKeys.includes(item)) {
+        setAllOpenKeys([item, ...allOpenKeys])
+      }
+    })
+    filesStore.setSelectedKeys(openKeys)
   }
+  // const onSelect = (openKeys) => {
+  //   console.log('openKeys', openKeys)
+  //   filesStore.setOpenFolder(openKeys.key)
+  // }
 
-  const onSelect = (openKeys) => {
+  const onDeselect = (openKeys) => {
     console.log('openKeys', openKeys)
   }
 
@@ -126,12 +155,13 @@ const DataMenu = () => {
       onClick={onClick}
       onOpenChange={onOpenChange}
       // onSelect={onSelect}
-      // openKeys={[filesStore.openFolder]}
-      defaultOpenKeys={['root']}
+      onDeselect={onDeselect}
+      openKeys={allOpenKeys}
+      defaultOpenKeys={['669f6de3daad41e24782120f']}
       style={{
         width: 400,
       }}
-      selectedKeys={selectedKeys}
+      selectedKeys={[filesStore.openFolder] ?? []}
       mode="inline"
       items={items}
       selectable={true}
