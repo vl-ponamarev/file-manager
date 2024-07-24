@@ -32,3 +32,15 @@
 .selected-row {
   background-color: #e6f4ff;
 }
+
+.ant-table-wrapper .ant-table-cell {
+  position: relative;
+}
+
+.ant-table-wrapper .action-button {
+  visibility: hidden;
+}
+
+.ant-table-wrapper .ant-table-row:hover .action-button {
+  visibility: visible;
+}

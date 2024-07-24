@@ -21,6 +21,16 @@ export default class FilesService {
     }
   }
 
+  static async getFiles() {
+    try {
+      const response = await api.get('/get-files')
+      return response
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
+
   static async createFolder(folderData) {
     try {
       const response = await api.post('/create-folder', folderData)

@@ -2,6 +2,7 @@ import React from 'react'
 import {
   Avatar,
   Breadcrumb,
+  Button,
   Col,
   Layout,
   Row,
@@ -9,6 +10,7 @@ import {
   theme,
   Typography,
 } from 'antd'
+import { ArrowUpOutlined } from '@ant-design/icons'
 import DataMenu from 'entities/data-menu/DataMenu'
 import iconImage from 'assets/favicon_io/favicon-32x32.png'
 import Logout from 'entities/logout/Logout'
@@ -33,6 +35,7 @@ const MainPage = () => {
   }
 
   const [param, setParam] = React.useState(true)
+  const [levelUp, setLevelUp] = React.useState(true)
 
   return (
     <Layout>
@@ -86,11 +89,23 @@ const MainPage = () => {
             }}
           >
             <Row>
-              <Col span={8}>
+              <Col span={1}>
+                {' '}
+                <Button
+                  style={{
+                    margin: '16px 0',
+                    border: 'none',
+                  }}
+                  onClick={() => setLevelUp(!levelUp)}
+                >
+                  <ArrowUpOutlined />
+                </Button>
+              </Col>
+              <Col span={7}>
                 {' '}
                 <Breadcrumb
                   style={{
-                    margin: '16px 0',
+                    margin: '20px 0',
                   }}
                 >
                   <Breadcrumb.Item>Home</Breadcrumb.Item>
@@ -120,7 +135,7 @@ const MainPage = () => {
                 borderRadius: borderRadiusLG,
               }}
             >
-              <DataViewComponent param={param} />
+              <DataViewComponent param={param} levelUp={levelUp} />
             </Content>
           </Layout>
         </Layout>

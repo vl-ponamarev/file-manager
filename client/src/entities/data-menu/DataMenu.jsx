@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { FolderOutlined } from '@ant-design/icons'
+import { FolderOutlined, FileOutlined } from '@ant-design/icons'
 import { Menu } from 'antd'
 import { FilesContext } from 'index'
 import './DataMenu.css'
@@ -9,6 +9,7 @@ import DropdownMenu from './ui/DropdownMenu'
 const DataMenu = () => {
   const { filesStore } = useContext(FilesContext)
   const [items, setItems] = useState([])
+  const [filesIds, setFilesIds] = useState([])
   // const [selectedKeys, setSelectedKeys] = useState([])
 
   const rootFolder = filesStore.folders.find(
@@ -17,9 +18,10 @@ const DataMenu = () => {
 
   useEffect(() => {
     filesStore.getFolders()
+    filesStore.getFiles()
   }, [])
 
-  console.log('openFolder', filesStore.openFolder)
+  console.log(filesStore.files)
   useEffect(() => {
     console.log('folders', filesStore.folders)
     if (filesStore.folders) {
@@ -39,7 +41,7 @@ const DataMenu = () => {
       filesStore.setOpenFolder(rootFolder?._id)
 
       filesStore.folders.forEach((item) => {
-        if (item.rootFolderId !== rootFolder._id) {
+        if (item.rootFolderId !== rootFolder?._id) {
           console.log('map[item.rootFolderId]', map[item.rootFolderId])
           const obj = map[item._id]
           console.log('obj', obj)
@@ -54,6 +56,7 @@ const DataMenu = () => {
                   <DropdownMenu
                     handleMenuClick={handleMenuClick}
                     id={item._id}
+                    type={'folder'}
                   />
                 </div>
               </div>
@@ -71,6 +74,7 @@ const DataMenu = () => {
                   <DropdownMenu
                     handleMenuClick={handleMenuClick}
                     id={item._id}
+                    type={'folder'}
                   />
                 </div>
               </div>
@@ -80,18 +84,44 @@ const DataMenu = () => {
         }
       })
 
+      const files = filesStore.files.map((item) => {
+        return {
+          key: item._id,
+          label: (
+            <div className="menu-item-wrapper">
+              {item.originalname}
+              <div className="menu-item-dropdown">
+                <DropdownMenu
+                  handleMenuClick={handleMenuClick}
+                  id={item._id}
+                  type={'file'}
+                />
+              </div>
+            </div>
+          ),
+          icon: <FileOutlined />,
+          // disabled: true,
+        }
+      })
+
+      const filesId = filesStore.files.map((item) => item._id)
+
+      setFilesIds(filesId)
+
+      const rootWithFiles = [...roots, ...files]
+
       const rootFolderPrepared = {
         key: rootFolder?._id,
         label: rootFolder?.foldername,
         icon: <FolderOutlined />,
-        children: roots,
+        children: rootWithFiles,
       }
 
       setItems([rootFolderPrepared])
     }
     // console.log([filesStore.createdFolder])
     // filesStore.setSelectedKeys([filesStore.createdFolder])
-  }, [filesStore.folders])
+  }, [filesStore.folders, filesStore.files])
 
   const handleMenuClick = (e) => {
     console.log('Clicked menu item key:', e.key)
@@ -103,6 +133,7 @@ const DataMenu = () => {
   const ref = useRef(filesStore.selectedKeys)
 
   console.log(ref.current)
+  console.log('files', filesIds)
 
   useEffect(() => {
     console.log(filesStore.selectedKeys)
@@ -125,26 +156,20 @@ const DataMenu = () => {
   console.log(filesStore.selectedKeys)
 
   const onClick = (e) => {
-    console.log('click ', e)
+    console.log('click ', e.key)
+    if (filesIds.includes(e.key)) return
     filesStore.setSelectedKeys([e.key])
   }
 
-  const [allOpenKeys, setAllOpenKeys] = useState(['669f6de3daad41e24782120f'])
-  console.log(allOpenKeys)
-
   const onOpenChange = (openKeys) => {
     console.log('openKeys', openKeys)
-    openKeys.forEach((item) => {
-      if (!allOpenKeys.includes(item)) {
-        setAllOpenKeys([item, ...allOpenKeys])
-      }
-    })
     filesStore.setSelectedKeys(openKeys)
   }
-  // const onSelect = (openKeys) => {
-  //   console.log('openKeys', openKeys)
-  //   filesStore.setOpenFolder(openKeys.key)
-  // }
+  const onSelect = (openKeys) => {
+    console.log('openKeys', openKeys)
+    if (filesIds.includes(openKeys.key)) return
+    filesStore.setOpenFolder(openKeys.key)
+  }
 
   const onDeselect = (openKeys) => {
     console.log('openKeys', openKeys)
@@ -154,14 +179,14 @@ const DataMenu = () => {
     <Menu
       onClick={onClick}
       onOpenChange={onOpenChange}
-      // onSelect={onSelect}
+      onSelect={onSelect}
       onDeselect={onDeselect}
-      openKeys={allOpenKeys}
+      // openKeys={filesStore.selectedKeys}
       defaultOpenKeys={['669f6de3daad41e24782120f']}
       style={{
         width: 400,
       }}
-      selectedKeys={[filesStore.openFolder] ?? []}
+      selectedKeys={[filesStore.openFolder] ?? ['669f6de3daad41e24782120f']}
       mode="inline"
       items={items}
       selectable={true}

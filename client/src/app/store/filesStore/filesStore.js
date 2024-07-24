@@ -38,7 +38,7 @@ export default class FilesStore {
       const response = await FilesService.getFiles()
       this.setFiles(response.data.reverse())
     } catch (err) {
-      console.log(err.response?.data?.message)
+      console.log(err)
     }
   }
 

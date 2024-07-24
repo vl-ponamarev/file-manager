@@ -8,27 +8,39 @@ import {
   ArrowRightOutlined,
   CopyOutlined,
   DeleteOutlined,
+  DownloadOutlined,
 } from '@ant-design/icons'
 
-const DropdownMenu = ({ handleMenuClick, id }) => {
+const DropdownMenu = ({ handleMenuClick, id, type }) => {
   return (
     <Dropdown
       trigger={['hover']}
       overlay={
         <Menu onClick={handleMenuClick}>
-          <Menu.Item key={`${id} new`}>
-            <Space>
-              <FolderAddOutlined />
-              <span>New directory</span>
-            </Space>
-          </Menu.Item>
-
-          <Menu.Item key={`${id} upload`}>
-            <Space>
-              <UploadOutlined />
-              <span>Upload files</span>
-            </Space>
-          </Menu.Item>
+          {type === 'folder' && (
+            <>
+              <Menu.Item key={`${id} new`}>
+                <Space>
+                  <FolderAddOutlined />
+                  <span>New directory</span>
+                </Space>
+              </Menu.Item>
+              <Menu.Item key={`${id} upload`}>
+                <Space>
+                  <UploadOutlined />
+                  <span>Upload files</span>
+                </Space>
+              </Menu.Item>{' '}
+            </>
+          )}
+          {type === 'file' && (
+            <Menu.Item key={`${id} download`}>
+              <Space>
+                <DownloadOutlined />
+                <span>Download</span>
+              </Space>
+            </Menu.Item>
+          )}
           <Menu.Item key={`${id} rename`}>
             <Space>
               <EditOutlined />
