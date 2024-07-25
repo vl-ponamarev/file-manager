@@ -100,7 +100,11 @@ const MainPage = () => {
                 borderRadius: borderRadiusLG,
               }}
             >
-              <DataViewComponent param={param} levelUp={levelUp} />
+              <DataViewComponent
+                param={param}
+                levelUp={levelUp}
+                setLevelUp={setLevelUp}
+              />
             </Content>
           </Layout>
         </Layout>

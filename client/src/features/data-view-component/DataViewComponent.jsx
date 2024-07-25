@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react-lite'
 
-const DataViewComponent = ({ param, levelUp }) => {
+const DataViewComponent = ({ param, levelUp, setLevelUp }) => {
   const [initialData, setInitialData] = useState(null)
   const { filesStore } = useContext(FilesContext)
   const [openFoldersState, setOpenFoldersState] = useState({})
@@ -14,7 +14,7 @@ const DataViewComponent = ({ param, levelUp }) => {
   console.log(filesStore.openFolder)
   const rootFolder = filesStore.openFolder
 
-  console.log(levelUp)
+  console.log(rootFolder)
   useEffect(() => {
     console.log('filesStore.folders', filesStore.folders)
     if (filesStore && filesStore.folders && filesStore.files) {
@@ -47,7 +47,15 @@ const DataViewComponent = ({ param, levelUp }) => {
             }
           })
         console.log('rootFiles', rootFiles)
-        setInitialData([...rootFolders, ...rootFiles])
+        if (rootFolder === '669f6de3daad41e24782120f') {
+          setInitialData([...rootFolders, ...rootFiles])
+        } else {
+          setInitialData([
+            { dataName: '...', id: 'back', type: 'back' },
+            ...rootFolders,
+            ...rootFiles,
+          ])
+        }
       }
     }
   }, [
@@ -85,10 +93,7 @@ const DataViewComponent = ({ param, levelUp }) => {
   console.log(openFoldersState)
 
   return param ? null : (
-    <DataTable
-      setOpenFolder={filesStore.setOpenFolder}
-      initialData={initialData}
-    />
+    <DataTable initialData={initialData} setLevelUp={setLevelUp} />
   )
 }
 

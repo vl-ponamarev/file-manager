@@ -1,13 +1,13 @@
 import React from 'react'
-import { Breadcrumb, Button, Col, Row } from 'antd'
+import { Breadcrumb, Button, Col, Row, Space } from 'antd'
 import { ArrowUpOutlined } from '@ant-design/icons'
 import { DataViewButton } from 'shared/ui/button'
+import { observer } from 'mobx-react-lite'
 
 const DataViewPanel = ({ param, setParam, levelUp, setLevelUp }) => {
   return (
-    <Row>
-      <Col span={1}>
-        {' '}
+    <Row justify="space-between" align="middle">
+      <Space>
         <Button
           style={{
             margin: '16px 0',
@@ -17,9 +17,6 @@ const DataViewPanel = ({ param, setParam, levelUp, setLevelUp }) => {
         >
           <ArrowUpOutlined />
         </Button>
-      </Col>
-      <Col span={7}>
-        {' '}
         <Breadcrumb
           style={{
             margin: '20px 0',
@@ -29,20 +26,12 @@ const DataViewPanel = ({ param, setParam, levelUp, setLevelUp }) => {
           <Breadcrumb.Item>List</Breadcrumb.Item>
           <Breadcrumb.Item>MainPage</Breadcrumb.Item>
         </Breadcrumb>
-      </Col>
-      <Col
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-        }}
-        span={8}
-        offset={8}
-      >
+      </Space>
+      <Space>
         <DataViewButton setParam={setParam} param={param} />
-      </Col>
+      </Space>
     </Row>
   )
 }
 
-export default DataViewPanel
+export default observer(DataViewPanel)
