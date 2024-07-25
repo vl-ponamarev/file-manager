@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Table, Menu, Dropdown, Checkbox, Button } from 'antd'
 import './DataTable.css'
 import { FilesContext } from 'index'
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react-lite'
-import { FolderOutlined, MoreOutlined } from '@ant-design/icons'
+import { FolderOutlined, MoreOutlined, FileOutlined } from '@ant-design/icons'
 
 const DataTable = ({ initialData }) => {
   const { filesStore } = useContext(FilesContext)
@@ -12,6 +12,7 @@ const DataTable = ({ initialData }) => {
   const [contextMenu, setContextMenu] = useState(null)
   const [selectedRowId, setSelectedRowId] = useState(null)
 
+  console.log(selectedRowKeys)
   const menu = (record) => (
     <Menu>
       <Menu.Item
@@ -41,7 +42,14 @@ const DataTable = ({ initialData }) => {
       title: '',
       dataIndex: 'icon',
       key: 'icon',
-      render: () => <FolderOutlined dataIndex={'key'} />,
+      render: (text, record) => {
+        if (record.type === 'folder') {
+          return <FolderOutlined />
+        } else if (record.type === 'file') {
+          return <FileOutlined />
+        }
+        return null
+      },
       width: '2%',
     },
     {
@@ -56,7 +64,7 @@ const DataTable = ({ initialData }) => {
       key: 'dataModified',
       sorter: (a, b) =>
         dayjs(a.dataModified).isBefore(dayjs(b.dataModified)) ? -1 : 1,
-      width: '20%',
+      width: '10%',
     },
     {
       title: 'File Size',
@@ -69,7 +77,7 @@ const DataTable = ({ initialData }) => {
       title: 'File Type',
       dataIndex: 'mimetype',
       key: 'mimetype',
-      sorter: (a, b) => a.mimetype.localeCompare(b.mimetype),
+      // sorter: (a, b) => a.mimetype.localeCompare(b.mimetype),
       width: '10%',
     },
 
@@ -115,13 +123,19 @@ const DataTable = ({ initialData }) => {
         checked={selectedRowKeys.includes(record.id)}
         onChange={() => {
           const newSelectedRowKeys = [...selectedRowKeys]
+          const newSelectedRowObjects = [...filesStore.selectedRowObjects]
           if (newSelectedRowKeys.includes(record.id)) {
             setSelectedRowKeys(
               newSelectedRowKeys.filter((key) => key !== record.id),
             )
+            filesStore.setSelectedRowObjects(
+              newSelectedRowObjects.filter((obj) => obj.id !== record.id),
+            )
           } else {
             newSelectedRowKeys.push(record.id)
             setSelectedRowKeys(newSelectedRowKeys)
+            newSelectedRowObjects.push({ id: record.id, type: record.type })
+            filesStore.setSelectedRowObjects(newSelectedRowObjects)
           }
         }}
         className={
@@ -131,34 +145,18 @@ const DataTable = ({ initialData }) => {
     ),
   }
 
+  console.log('---->>>>>>', filesStore.selectedRowObjects)
+
   return (
     <div>
+      <Button
+        style={{ display: selectedRowKeys?.length ? 'block' : 'none' }}
+        onClick={() => setSelectedRowKeys([])}
+      >
+        ok
+      </Button>
       <Table
-        rowSelection={{
-          ...rowSelection,
-          renderCell: (_, record, index) => (
-            <Checkbox
-              checked={selectedRowKeys.includes(record.id)}
-              onChange={() => {
-                const newSelectedRowKeys = [...selectedRowKeys]
-                if (newSelectedRowKeys.includes(record.id)) {
-                  setSelectedRowKeys(
-                    newSelectedRowKeys.filter((key) => key !== record.id),
-                  )
-                } else {
-                  newSelectedRowKeys.push(record.id)
-                  setSelectedRowKeys(newSelectedRowKeys)
-                }
-              }}
-              className={
-                selectedRowKeys.includes(record.id)
-                  ? 'ant-checkbox-wrapper'
-                  : ''
-              }
-            />
-          ),
-          // onCell: (record, rowIndex) => console.log(record, rowIndex),
-        }}
+        rowSelection={rowSelection}
         columns={columns}
         dataSource={initialData}
         rowClassName={(record, index) => {
@@ -170,9 +168,9 @@ const DataTable = ({ initialData }) => {
             onContextMenu: (event) => handleRowContextMenu(event, record),
             onClick: () => {
               const { id } = record
+              console.log('record', record)
 
               if (id) {
-                console.log('ok')
                 setSelectedRowId(id)
               }
             },
@@ -181,7 +179,7 @@ const DataTable = ({ initialData }) => {
               console.log(id)
               if (id) {
                 console.log('ok')
-                setSelectedRowId(id)
+                setSelectedRowKeys(null)
                 filesStore.setOpenFolder(id)
                 filesStore.setSelectedKeys([id])
               }

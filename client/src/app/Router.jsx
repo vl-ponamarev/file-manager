@@ -1,4 +1,4 @@
-import LoginAction from 'entities/login/LoginAction'
+import LoginAction from 'features/login/LoginAction'
 import EditPost from 'features/post/editPost/EditPost'
 import { UserContext } from 'index'
 import { useContext } from 'react'
@@ -6,7 +6,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 
 import MainPage from '../pages/main/MainPage'
-import SignUpAction from 'entities/signup/SignUpAction'
+import SignUpAction from 'features/signup/SignUpAction'
 import ActivationPage from 'pages/activation/ActivationPage'
 
 const Router = observer(() => {

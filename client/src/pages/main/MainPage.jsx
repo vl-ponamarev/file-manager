@@ -6,19 +6,18 @@ import {
   Col,
   Layout,
   Row,
-  Space,
   theme,
   Typography,
 } from 'antd'
 import { ArrowUpOutlined } from '@ant-design/icons'
 import DataMenu from 'entities/data-menu/DataMenu'
 import iconImage from 'assets/favicon_io/favicon-32x32.png'
-import Logout from 'entities/logout/Logout'
-import UploadFiles from 'features/uploadFile/UploadFiles'
-import CreateDirectory from 'features/create-directory/CreateDirectory'
+import Logout from 'features/logout/Logout'
 import { observer } from 'mobx-react-lite'
 import { DataViewButton } from 'shared/ui/button'
 import DataViewComponent from 'features/data-view-component/DataViewComponent'
+import DataActionPanel from 'widgets/data-action-panel/DataActionPanel'
+import DataViewPanel from 'widgets/data-view-panel/DataViewPanel'
 const { Header, Content, Sider } = Layout
 const { Text } = Typography
 
@@ -63,10 +62,7 @@ const MainPage = () => {
             background: '#feffff',
           }}
         >
-          <Space>
-            <CreateDirectory />
-            <UploadFiles />
-          </Space>
+          <DataActionPanel />
         </Header>
         <Layout
           style={{
@@ -88,43 +84,12 @@ const MainPage = () => {
               flex: 1,
             }}
           >
-            <Row>
-              <Col span={1}>
-                {' '}
-                <Button
-                  style={{
-                    margin: '16px 0',
-                    border: 'none',
-                  }}
-                  onClick={() => setLevelUp(!levelUp)}
-                >
-                  <ArrowUpOutlined />
-                </Button>
-              </Col>
-              <Col span={7}>
-                {' '}
-                <Breadcrumb
-                  style={{
-                    margin: '20px 0',
-                  }}
-                >
-                  <Breadcrumb.Item>Home</Breadcrumb.Item>
-                  <Breadcrumb.Item>List</Breadcrumb.Item>
-                  <Breadcrumb.Item>MainPage</Breadcrumb.Item>
-                </Breadcrumb>
-              </Col>
-              <Col
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  alignItems: 'center',
-                }}
-                span={8}
-                offset={8}
-              >
-                <DataViewButton setParam={setParam} param={param} />
-              </Col>
-            </Row>
+            <DataViewPanel
+              param={param}
+              setParam={setParam}
+              levelUp={levelUp}
+              setLevelUp={setLevelUp}
+            />
 
             <Content
               style={{

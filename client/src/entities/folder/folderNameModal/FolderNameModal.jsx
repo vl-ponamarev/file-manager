@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Button, Input, Modal } from 'antd'
+import React, { useContext, useRef, useState } from 'react'
+import { Input, Modal } from 'antd'
 import Draggable from 'react-draggable'
 import { observer } from 'mobx-react-lite'
 import { FilesContext } from 'index'
-const FolderNameModal = ({ open, setOpen }) => {
+const FolderNameModal = ({ open, setOpen, method }) => {
+  console.log(method)
   const [disabled, setDisabled] = useState(true)
   const [bounds, setBounds] = useState({
     left: 0,
@@ -17,27 +18,27 @@ const FolderNameModal = ({ open, setOpen }) => {
 
   const date = new Date()
 
-  // const [openFolder, setOpenFolder] = useState([])
-
-  // useEffect(() => {
-  //   filesStore.openFolder.length > 0
-  //     ? setOpenFolder(filesStore.openFolder)
-  //     : setOpenFolder('null')
-  // }, [filesStore.openFolder])
-
   console.log(filesStore.openFolder)
 
+  const { foldername } = filesStore.folders.find(
+    (file) => file._id === filesStore.openFolder,
+  )
+  console.log(foldername)
+
   const draggleRef = useRef(null)
-  const showModal = () => {
-    setOpen(true)
-  }
+
   const handleOk = (e) => {
     // console.log(e)
-    filesStore.createFolder({
-      foldername: value,
-      rootFolderId: filesStore.openFolder,
-      creationDate: date,
-    })
+    if (method === 'create') {
+      filesStore.createFolder({
+        foldername: value,
+        rootFolderId: filesStore.openFolder,
+        creationDate: date,
+      })
+    } else {
+      filesStore.renameFolder(filesStore.openFolder, value)
+    }
+
     setOpen(false)
   }
   const handleCancel = (e) => {
@@ -58,7 +59,6 @@ const FolderNameModal = ({ open, setOpen }) => {
   }
   return (
     <>
-      <Button onClick={showModal}>Open Draggable Modal</Button>
       <Modal
         title={
           <div
@@ -98,7 +98,7 @@ const FolderNameModal = ({ open, setOpen }) => {
         )}
       >
         <Input
-          placeholder="Enter Folder Name"
+          placeholder={method === 'create' ? 'Enter Folder Name' : foldername}
           value={value}
           onChange={(e) => setValue(e.target.value)}
         />

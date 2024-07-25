@@ -21,7 +21,7 @@ const DataMenu = () => {
     filesStore.getFiles()
   }, [])
 
-  console.log(filesStore.files)
+  console.log('---->>>>', filesStore.files)
   useEffect(() => {
     console.log('folders', filesStore.folders)
     if (filesStore.folders) {
@@ -85,22 +85,24 @@ const DataMenu = () => {
       })
 
       const files = filesStore.files.map((item) => {
-        return {
-          key: item._id,
-          label: (
-            <div className="menu-item-wrapper">
-              {item.originalname}
-              <div className="menu-item-dropdown">
-                <DropdownMenu
-                  handleMenuClick={handleMenuClick}
-                  id={item._id}
-                  type={'file'}
-                />
+        if (item.folderId === rootFolder?._id) {
+          return {
+            key: item._id,
+            label: (
+              <div className="menu-item-wrapper">
+                {item.originalname}
+                <div className="menu-item-dropdown">
+                  <DropdownMenu
+                    handleMenuClick={handleMenuClick}
+                    id={item._id}
+                    type={'file'}
+                  />
+                </div>
               </div>
-            </div>
-          ),
-          icon: <FileOutlined />,
-          // disabled: true,
+            ),
+            icon: <FileOutlined />,
+            // disabled: true,
+          }
         }
       })
 
@@ -125,7 +127,6 @@ const DataMenu = () => {
 
   const handleMenuClick = (e) => {
     console.log('Clicked menu item key:', e.key)
-
     e.domEvent.stopPropagation()
     // Здесь вы можете выполнять действия на основе значения e.key
   }

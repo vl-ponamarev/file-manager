@@ -7,6 +7,7 @@ export default class FilesStore {
   openFolder = []
   createdFolder = []
   selectedKeys = ''
+  selectedRowObjects = []
 
   constructor() {
     makeAutoObservable(this)
@@ -22,6 +23,10 @@ export default class FilesStore {
 
   setSelectedKeys(selectedKeys) {
     this.selectedKeys = selectedKeys
+  }
+
+  setSelectedRowObjects(selectedRowObjects) {
+    this.selectedRowObjects = selectedRowObjects
   }
 
   setOpenFolder(openFolder) {
@@ -87,6 +92,15 @@ export default class FilesStore {
   async editFileName(id, formData) {
     try {
       const response = await FilesService.editFileName(id, formData)
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async editFolderName(id, formData) {
+    try {
+      const response = await FilesService.editFolderName(id, formData)
       console.log(response)
     } catch (error) {
       console.log(error)
