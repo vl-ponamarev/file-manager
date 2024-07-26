@@ -4,21 +4,63 @@ import { FilesContext } from 'index'
 import { v4 as uuidv4 } from 'uuid'
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react-lite'
+import DataListView from 'entities/data-list-view/DataListView'
 
 const DataViewComponent = ({ param, levelUp, setLevelUp }) => {
   const [initialData, setInitialData] = useState(null)
   const { filesStore } = useContext(FilesContext)
   const [openFoldersState, setOpenFoldersState] = useState({})
+  const [selectedRowKeys, setSelectedRowKeys] = useState([])
 
   console.log(filesStore.selectedKeys)
   console.log(filesStore.openFolder)
   const rootFolder = filesStore.openFolder
+
+  useEffect(() => {
+    filesStore.setSelectedRowKeysStoreStore(selectedRowKeys)
+  }, [selectedRowKeys])
 
   console.log(rootFolder)
   useEffect(() => {
     console.log('filesStore.folders', filesStore.folders)
     if (filesStore && filesStore.folders && filesStore.files) {
       if (param) {
+        const rootFolders = filesStore.folders
+          .filter((item) => item.rootFolderId === rootFolder)
+          //   .sort((a, b) => a.foldername.localeCompare(b.foldername))
+          .map((item) => {
+            return {
+              dataName: item.foldername,
+              dataModified: dayjs(item.creationDate).format('DD.MM.YYYY HH:mm'),
+              fileSize: '',
+              id: item._id,
+              type: 'folder',
+            }
+          })
+
+        console.log('rootFolders', rootFolders)
+        const rootFiles = filesStore.files
+          .filter((item) => item.folderId === rootFolder)
+          .map((item) => {
+            return {
+              dataName: item.originalname,
+              dataModified: dayjs(item.dateModified).format('DD.MM.YYYY HH:mm'),
+              fileSize: item.size,
+              id: item._id,
+              type: 'file',
+              mimetype: item.mimetype,
+            }
+          })
+        console.log('rootFiles', rootFiles)
+        if (rootFolder === '669f6de3daad41e24782120f') {
+          setInitialData([...rootFolders, ...rootFiles])
+        } else {
+          setInitialData([
+            { dataName: '...', id: 'back', type: 'back' },
+            ...rootFolders,
+            ...rootFiles,
+          ])
+        }
       } else {
         const rootFolders = filesStore.folders
           .filter((item) => item.rootFolderId === rootFolder)
@@ -67,6 +109,16 @@ const DataViewComponent = ({ param, levelUp, setLevelUp }) => {
   ])
 
   useEffect(() => {
+    setTimeout(() => {
+      setSelectedRowKeys([])
+    }, 200)
+  }, [filesStore.clearSelectedRowKeysButtonState])
+
+  console.log(filesStore.clearSelectedRowKeysButtonState)
+
+  console.log(selectedRowKeys)
+
+  useEffect(() => {
     if (filesStore && filesStore.folders) {
       const openFolderItem = filesStore.folders.find(
         (item) => item._id === filesStore.openFolder,
@@ -92,8 +144,20 @@ const DataViewComponent = ({ param, levelUp, setLevelUp }) => {
 
   console.log(openFoldersState)
 
-  return param ? null : (
-    <DataTable initialData={initialData} setLevelUp={setLevelUp} />
+  return param ? (
+    <DataListView
+      initialData={initialData}
+      setLevelUp={setLevelUp}
+      selectedRowKeys={selectedRowKeys}
+      setSelectedRowKeys={setSelectedRowKeys}
+    />
+  ) : (
+    <DataTable
+      initialData={initialData}
+      setLevelUp={setLevelUp}
+      selectedRowKeys={selectedRowKeys}
+      setSelectedRowKeys={setSelectedRowKeys}
+    />
   )
 }
 

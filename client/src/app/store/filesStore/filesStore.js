@@ -8,6 +8,8 @@ export default class FilesStore {
   createdFolder = []
   selectedKeys = ''
   selectedRowObjects = []
+  selectedRowKeysStore = []
+  clearSelectedRowKeysButtonState = false
 
   constructor() {
     makeAutoObservable(this)
@@ -15,6 +17,13 @@ export default class FilesStore {
 
   setFiles(files) {
     this.files = files
+  }
+
+  setClearSelectedRowKeysButtonState(clearSelectedRowKeysButtonState) {
+    this.clearSelectedRowKeysButtonState = clearSelectedRowKeysButtonState
+  }
+  setSelectedRowKeysStoreStore(selectedRowKeysStore) {
+    this.selectedRowKeysStore = selectedRowKeysStore
   }
 
   setFolders(folders) {

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Table, Menu, Dropdown, Button, Flex } from 'antd'
+import { Table, Menu, Dropdown, Flex } from 'antd'
 import './DataTable.css'
 import { FilesContext } from 'index'
 import dayjs from 'dayjs'
@@ -8,14 +8,17 @@ import {
   FolderOutlined,
   MoreOutlined,
   FileOutlined,
-  ClearOutlined,
   ArrowUpOutlined,
 } from '@ant-design/icons'
 
-const DataTable = ({ initialData, setLevelUp }) => {
+const DataTable = ({
+  initialData,
+  setLevelUp,
+  selectedRowKeys,
+  setSelectedRowKeys,
+}) => {
   console.log(initialData)
   const { filesStore } = useContext(FilesContext)
-  // const [selectedRowKeys, filesStore.setSelectedRowKeys] = useState([])
   const [contextMenu, setContextMenu] = useState(null)
   const [selectedRowId, setSelectedRowId] = useState(null)
 
@@ -130,49 +133,6 @@ const DataTable = ({ initialData, setLevelUp }) => {
     )
   }
 
-  // const rowSelection = {
-  //   // ...filesStore.selectedRowKeys,
-  //   onChange: onSelectChange,
-  //   renderCell: (_, record) => (
-  //     <Checkbox
-  //       checked={filesStore.selectedRowKeys.includes(record.id)}
-  //       onChange={() => {
-  //         const newSelectedRowKeys = [...filesStore.selectedRowKeys]
-  //         const newSelectedRowObjects = [...filesStore.selectedRowObjects]
-  //         if (newSelectedRowKeys.includes(record.id)) {
-  //           filesStore.setSelectedRowKeys(
-  //             newSelectedRowKeys.filter((key) => key !== record.id),
-  //           )
-  //           filesStore.setSelectedRowObjects(
-  //             newSelectedRowObjects.filter((obj) => obj.id !== record.id),
-  //           )
-  //         } else {
-  //           newSelectedRowKeys.push(record.id)
-  //           filesStore.setSelectedRowKeys(newSelectedRowKeys)
-  //           newSelectedRowObjects.push({ id: record.id, type: record.type })
-  //           filesStore.setSelectedRowObjects(newSelectedRowObjects)
-  //         }
-  //       }}
-  //       className={
-  //         filesStore.selectedRowKeys.includes(record.id)
-  //           ? 'ant-checkbox-wrapper'
-  //           : ''
-  //       }
-  //     />
-  //   ),
-  // }
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState([])
-  const [loading, setLoading] = useState(false)
-  const start = () => {
-    setLoading(true)
-    // ajax request after empty completing
-    setTimeout(() => {
-      setSelectedRowKeys([])
-      filesStore.setSelectedRowObjects([])
-      setLoading(false)
-    }, 200)
-  }
   const onSelectChange = (newSelectedRowKeys) => {
     console.log(newSelectedRowKeys)
     setSelectedRowKeys(newSelectedRowKeys)
@@ -212,20 +172,6 @@ const DataTable = ({ initialData, setLevelUp }) => {
   return (
     <Flex gap="middle" vertical>
       <Flex align="center" gap="middle">
-        <Button
-          style={{
-            backgroundColor: hasSelected ? '#1976d2' : 'gray',
-            borderColor: hasSelected ? '#1976d2' : 'gray',
-            color: 'white',
-            // display: selectedRowKeys?.length ? 'flex' : 'none',
-          }}
-          icon={<ClearOutlined />}
-          onClick={start}
-          disabled={!hasSelected}
-          loading={loading}
-        >
-          CLEAR SELECTION
-        </Button>
         {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
       </Flex>
       <Table

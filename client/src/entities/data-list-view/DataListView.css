@@ -1,0 +1,45 @@
+.card {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+:hover.card {
+  cursor: pointer;
+  background-color: rgb(247, 242, 242);
+}
+
+.text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 10px;
+}
+
+.data-list-view {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 2em;
+}
+
+.item {
+  font-size: 60px;
+  color: gray;
+}
+
+.item-back {
+  font-size: 15px;
+  color: gray;
+}
+
+.item-file {
+  font-size: 50px;
+  color: gray;
+}
+
+.custom-content p {
+  margin: 2px 0;
+}
