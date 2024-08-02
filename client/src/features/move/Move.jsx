@@ -21,7 +21,7 @@ const Move = () => {
       >
         RENAME
       </Button>
-      {/* {open && <FolderNameModal open={open} setOpen={setOpen} method="move" />} */}
+      {/* {open && <EditNameModal open={open} setOpen={setOpen} method="move" />} */}
     </>
   )
 }

@@ -23,6 +23,16 @@
   flex-wrap: wrap;
   justify-content: flex-start;
   gap: 2em;
+  -webkit-touch-callout: none; /* prevent callout to copy image, etc. in iOS */
+  -webkit-user-select: none; /* prevent text selection in Safari */
+  -khtml-user-select: none; /* prevent text selection in early Konqueror versions */
+  -moz-user-select: none; /* prevent text selection in Firefox */
+  -ms-user-select: none; /* prevent text selection in Internet Explorer/Edge */
+  user-select: none;
+}
+
+.data-list-view * {
+  user-select: none; /* prevent text selection */
 }
 
 .item {

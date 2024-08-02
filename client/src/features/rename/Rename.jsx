@@ -1,13 +1,44 @@
 import { Button } from 'antd'
 import React, { useState } from 'react'
 import { EditOutlined } from '@ant-design/icons'
-import FolderNameModal from 'entities/folder/folderNameModal/FolderNameModal'
+import EditNameModal from 'entities/folder/ui/EditNameModal'
+import { FilesContext } from 'index'
+import { observer } from 'mobx-react-lite'
+import { useContext } from 'react'
 
 const Rename = () => {
+  const { filesStore } = useContext(FilesContext)
+
   const [open, setOpen] = useState(false)
+  const [dataToRename, setDataToRename] = useState(null)
 
   const onClick = () => {
-    setOpen(true)
+    const selectedItem = filesStore.selectedRowKeysStore[0]
+    console.log(selectedItem)
+    if (selectedItem) {
+      const file = filesStore.files.find((file) => file._id === selectedItem)
+      if (file) {
+        console.log(file)
+        setOpen(true)
+        setDataToRename({
+          type: 'file',
+          id: file._id,
+          name: file.originalname,
+        })
+        return
+      } else {
+        setOpen(true)
+        const folder = filesStore.folders.find(
+          (folder) => folder._id === selectedItem,
+        )
+        setDataToRename({
+          type: 'folder',
+          id: folder._id,
+          name: folder.foldername,
+        })
+        return
+      }
+    }
   }
   return (
     <>
@@ -22,9 +53,16 @@ const Rename = () => {
       >
         RENAME
       </Button>
-      {open && <FolderNameModal open={open} setOpen={setOpen} method="edit" />}
+      {open && (
+        <EditNameModal
+          open={open}
+          setOpen={setOpen}
+          method="edit"
+          dataToRename={dataToRename}
+        />
+      )}
     </>
   )
 }
 
-export default Rename
+export default observer(Rename)

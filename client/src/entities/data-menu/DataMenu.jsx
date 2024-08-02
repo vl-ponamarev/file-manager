@@ -10,41 +10,33 @@ const DataMenu = () => {
   const { filesStore } = useContext(FilesContext)
   const [items, setItems] = useState([])
   const [filesIds, setFilesIds] = useState([])
-  // const [selectedKeys, setSelectedKeys] = useState([])
+  const rootKey = filesStore.rootKey
+  const [openStateKeys, setOpenStateKeys] = useState([rootKey])
 
   const rootFolder = filesStore.folders.find(
-    (item) => item.foldername === 'Files',
+    (item) => item.foldername === 'Folders',
   )
+
+  const refOpenKeysLength = useRef(0)
+  const refOpenKeys = useRef(null)
 
   useEffect(() => {
     filesStore.getFolders()
     filesStore.getFiles()
   }, [])
 
-  console.log('---->>>>', filesStore.files)
   useEffect(() => {
-    console.log('folders', filesStore.folders)
     if (filesStore.folders) {
       const map = {}
       const roots = []
 
-      // Создаем словарь объектов по их id
       filesStore.folders.forEach((item) => {
-        console.log('item', item)
         map[item._id] = { ...item, children: [] }
       })
 
-      console.log('map', map)
-      // const rootFolder = filesStore.folders.find(
-      //   (item) => item.foldername === 'Files',
-      // )
-      filesStore.setOpenFolder(rootFolder?._id)
-
       filesStore.folders.forEach((item) => {
         if (item.rootFolderId !== rootFolder?._id) {
-          console.log('map[item.rootFolderId]', map[item.rootFolderId])
           const obj = map[item._id]
-          console.log('obj', obj)
           map[item.rootFolderId]?.children.push({
             children: obj.children.length > 0 ? obj.children : null,
             key: obj._id,
@@ -101,7 +93,6 @@ const DataMenu = () => {
               </div>
             ),
             icon: <FileOutlined />,
-            // disabled: true,
           }
         }
       })
@@ -120,74 +111,159 @@ const DataMenu = () => {
       }
 
       setItems([rootFolderPrepared])
+      if (filesStore.saveOpenKeys.status) {
+        console.log(refOpenKeys.current)
+        setOpenStateKeys(refOpenKeys.current)
+        console.log(filesStore.saveOpenKeys.folderId)
+        console.log(filesStore.saveOpenKeys)
+
+        filesStore.setOpenFolder(filesStore.saveOpenKeys.folderId)
+        filesStore.setSaveOpenKeys({
+          status: false,
+          folderId: null,
+        })
+      }
     }
-    // console.log([filesStore.createdFolder])
-    // filesStore.setSelectedKeys([filesStore.createdFolder])
   }, [filesStore.folders, filesStore.files])
+  console.log(filesStore.openFolder)
 
   const handleMenuClick = (e) => {
     console.log('Clicked menu item key:', e.key)
     e.domEvent.stopPropagation()
-    // Здесь вы можете выполнять действия на основе значения e.key
   }
-
-  const ref = useRef(filesStore.selectedKeys)
-
-  console.log(ref.current)
-  console.log('files', filesIds)
+  console.log(filesStore.saveOpenKeys)
+  console.log(refOpenKeys.current)
 
   useEffect(() => {
-    console.log(filesStore.selectedKeys)
-    console.log(filesStore.selectedKeys.length)
     if (filesStore?.selectedKeys?.length === 0) {
-      console.log('ok')
-      filesStore.setOpenFolder(rootFolder?._id)
-    } else if (filesStore?.selectedKeys?.length > 1) {
-      console.log('oks')
-      filesStore.setOpenFolder(
-        filesStore.selectedKeys[filesStore.selectedKeys.length - 1],
-      )
-    } else {
-      console.log('oki')
-      filesStore.setOpenFolder(filesStore.selectedKeys[0])
+      filesStore.setOpenFolder(rootKey)
     }
   }, [filesStore.selectedKeys])
 
-  console.log(filesStore.openFolder)
-  console.log(filesStore.selectedKeys)
+  useEffect(() => {
+    console.log('openFolder', filesStore.openFolder)
 
-  const onClick = (e) => {
-    console.log('click ', e.key)
-    if (filesIds.includes(e.key)) return
-    filesStore.setSelectedKeys([e.key])
-  }
+    const parentFolders = []
+    const getParentFolderId = (data, id) => {
+      const foundItem = data?.find((item) => item._id === id)
+      if (foundItem) {
+        console.log(foundItem)
+        return foundItem.rootFolderId
+      }
+      console.log('No item found with the given id')
+      return null
+    }
+    const getParentFolderIds = (data, id) => {
+      const folder = getParentFolderId(data, id)
+      if (folder) {
+        console.log(folder)
+        parentFolders.push(folder)
+        getParentFolderIds(data, folder)
+      }
+    }
+    getParentFolderIds(filesStore.folders, filesStore.openFolder)
+
+    console.log(parentFolders)
+    const result = parentFolders.filter((folder) => folder !== 'null')
+    console.log(result)
+    if (result.length > 0) {
+      setOpenStateKeys([filesStore.openFolder, ...result])
+      filesStore.setOpenFolderParentsList(result)
+    }
+  }, [filesStore.openFolder])
 
   const onOpenChange = (openKeys) => {
-    console.log('openKeys', openKeys)
-    filesStore.setSelectedKeys(openKeys)
+    console.log('ok')
+    console.log(openKeys)
+    console.log(openStateKeys)
+    if (openKeys.length >= refOpenKeysLength.current) {
+      filesStore.setOpenFolder(openKeys[openKeys.length - 1])
+      filesStore.setSelectedKeys(openKeys)
+      refOpenKeysLength.current = openKeys.length
+      refOpenKeys.current = openKeys
+      setOpenStateKeys(openKeys)
+    } else if (openKeys.length < refOpenKeysLength.current) {
+      let deselectedFolder
+      refOpenKeys.current.forEach((key) => {
+        if (!openKeys.includes(key)) {
+          deselectedFolder = key
+        }
+      })
+      if (deselectedFolder !== rootKey) {
+        const { rootFolderId, _id } = filesStore.folders.find(
+          (item) => item._id === deselectedFolder,
+        )
+
+        const childFolders = []
+
+        const getChildFolderId = (data, id) => {
+          return data.find((item) => item.rootFolderId === id)
+        }
+        const getChildFolderIds = (data, id) => {
+          const folder = getChildFolderId(data, id)
+          if (folder) {
+            childFolders.push(folder._id)
+            getChildFolderIds(data, folder._id)
+          }
+        }
+        getChildFolderIds(filesStore.folders, _id)
+
+        if (childFolders.length > 0) {
+          const newOpenStateKeys = [...openStateKeys]
+            .filter((key) => key !== deselectedFolder)
+            .reduce((array, current) => {
+              if (!childFolders.includes(current)) {
+                return [...array, current]
+              }
+              return array
+            }, [])
+          setOpenStateKeys(newOpenStateKeys)
+          refOpenKeysLength.current = newOpenStateKeys.length
+          refOpenKeys.current = newOpenStateKeys
+        }
+
+        filesStore.setOpenFolder(rootFolderId)
+      } else {
+        setOpenStateKeys([rootKey])
+        filesStore.setOpenFolder(rootKey)
+        refOpenKeysLength.current = 0
+        refOpenKeys.current = null
+      }
+    }
   }
   const onSelect = (openKeys) => {
-    console.log('openKeys', openKeys)
+    console.log(openKeys)
     if (filesIds.includes(openKeys.key)) return
     filesStore.setOpenFolder(openKeys.key)
+    refOpenKeys.current = openKeys.keyPath
+    refOpenKeysLength.current = openKeys.keyPath.length
   }
 
   const onDeselect = (openKeys) => {
-    console.log('openKeys', openKeys)
+    console.log(openKeys)
+    if (openKeys.key !== rootKey) {
+      const { rootFolderId } = filesStore.folders.find(
+        (item) => item._id === openKeys.key,
+      )
+      filesStore.setOpenFolder(rootFolderId)
+      refOpenKeys.current = openKeys.keyPath.filter(
+        (key) => key !== openKeys.key,
+      )
+      refOpenKeysLength.current = refOpenKeys.current.length
+    }
   }
 
   return (
     <Menu
-      onClick={onClick}
       onOpenChange={onOpenChange}
       onSelect={onSelect}
       onDeselect={onDeselect}
-      // openKeys={filesStore.selectedKeys}
-      defaultOpenKeys={['669f6de3daad41e24782120f']}
+      openKeys={openStateKeys}
+      defaultOpenKeys={[rootKey]}
       style={{
         width: 400,
       }}
-      selectedKeys={[filesStore.openFolder] ?? ['669f6de3daad41e24782120f']}
+      selectedKeys={[filesStore.openFolder] ?? [rootKey]}
       mode="inline"
       items={items}
       selectable={true}

@@ -55,13 +55,22 @@ export default class FilesService {
     }
   }
 
-  static async editFileName(id, formData) {
+  static async editName(data, formData) {
+    const { id, type } = data
+    console.log(id)
+
+    console.log(data)
+
     try {
-      const response = await api.put(`/files/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
+      let response
+      if (type === 'folder') {
+        response = await api.put(`/edit-folder/${id}`, { formData })
+        console.log(response)
+      }
+      if (type === 'file') {
+        response = await api.put(`/edit-file/${id}`, { formData })
+        console.log(response)
+      }
       return response
     } catch (error) {
       console.log(error)
@@ -69,15 +78,26 @@ export default class FilesService {
     }
   }
 
-  static async deleteFile(data) {
+  static async deleteFiles(fileIds) {
     try {
-      const response = await api.delete('/delete', {
-        data: JSON.stringify({ _id: data }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      console.log(fileIds)
+      const response = await api.delete('/delete-files', {
+        data: fileIds,
       })
-
+      console.log(response)
+      return response
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
+  static async deleteFolders(foldersIds) {
+    try {
+      console.log(foldersIds)
+      const response = await api.delete('/delete-folders', {
+        data: foldersIds,
+      })
+      console.log(response)
       return response
     } catch (error) {
       console.log(error)

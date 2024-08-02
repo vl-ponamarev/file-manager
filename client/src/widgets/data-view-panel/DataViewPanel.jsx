@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react'
-import { Breadcrumb, Button, Col, Row, Space } from 'antd'
+import { Button, Row, Space } from 'antd'
 import { ArrowUpOutlined, ClearOutlined } from '@ant-design/icons'
 import { DataViewButton } from 'shared/ui/button'
 import { observer } from 'mobx-react-lite'
 import { FilesContext } from 'index'
+import BreadcrumbsComponent from 'features/breadcrumbs/BreadcrumbsComponent'
 
 const DataViewPanel = ({ param, setParam, levelUp, setLevelUp }) => {
   const { filesStore } = useContext(FilesContext)
@@ -37,15 +38,7 @@ const DataViewPanel = ({ param, setParam, levelUp, setLevelUp }) => {
         >
           <ArrowUpOutlined />
         </Button>
-        <Breadcrumb
-          style={{
-            margin: '20px 0',
-          }}
-        >
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-          <Breadcrumb.Item>List</Breadcrumb.Item>
-          <Breadcrumb.Item>MainPage</Breadcrumb.Item>
-        </Breadcrumb>
+        <BreadcrumbsComponent />
       </Space>
       <Space>
         <Button

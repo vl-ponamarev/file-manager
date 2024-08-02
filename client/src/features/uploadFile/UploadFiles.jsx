@@ -11,6 +11,7 @@ const UploadFileAntd = () => {
 
   const [files, setFiles] = React.useState(null)
   const fileInputRef = React.useRef(null)
+  const rootKey = filesStore.rootKey
 
   const handleFileChange = (event) => {
     console.log(event.target)
@@ -22,8 +23,6 @@ const UploadFileAntd = () => {
     // when the Button is clicked
     fileInputRef.current.click()
   }
-
-  console.log(filesStore.openFolder)
 
   useEffect(() => {
     const handleSave = async () => {
@@ -39,25 +38,32 @@ const UploadFileAntd = () => {
 
         try {
           const response = await filesStore.saveFiles(formData)
-          console.log(response.data)
-          // filesStore.getFiles() // This line can be uncommented if you want to refresh the files list
+          console.log(response)
+          if (response.status === 200 && response.data) {
+            console.log('oki')
+            filesStore.setSaveOpenKeys({
+              status: true,
+              folderId: response.data[0].folderId,
+            })
+          }
         } catch (error) {
           console.error('Error uploading files:', error)
         }
       }
     }
     handleSave()
-    filesStore.getFiles()
   }, [files, userStore.user.id])
 
   return (
     <>
       <Button
         style={{
-          backgroundColor: '#1976d2',
+          backgroundColor:
+            filesStore.openFolder === rootKey ? 'gray' : '#1976d2',
           borderColor: '#1976d2',
           color: 'white',
         }}
+        disabled={filesStore.openFolder === rootKey}
         icon={<CloudUploadOutlined />}
         onClick={handleClick}
       >
@@ -68,7 +74,7 @@ const UploadFileAntd = () => {
         type="file"
         multiple
         style={{
-          display: 'none', // Hide the input element
+          display: 'none',
         }}
         onChange={handleFileChange}
       />

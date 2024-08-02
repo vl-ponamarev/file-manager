@@ -1,20 +1,9 @@
 import React from 'react'
-import {
-  Avatar,
-  Breadcrumb,
-  Button,
-  Col,
-  Layout,
-  Row,
-  theme,
-  Typography,
-} from 'antd'
-import { ArrowUpOutlined } from '@ant-design/icons'
+import { Avatar, Layout, theme, Typography } from 'antd'
 import DataMenu from 'entities/data-menu/DataMenu'
 import iconImage from 'assets/favicon_io/favicon-32x32.png'
 import Logout from 'features/logout/Logout'
 import { observer } from 'mobx-react-lite'
-import { DataViewButton } from 'shared/ui/button'
 import DataViewComponent from 'features/data-view-component/DataViewComponent'
 import DataActionPanel from 'widgets/data-action-panel/DataActionPanel'
 import DataViewPanel from 'widgets/data-view-panel/DataViewPanel'

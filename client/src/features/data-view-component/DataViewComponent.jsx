@@ -13,12 +13,22 @@ const DataViewComponent = ({ param, levelUp, setLevelUp }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
 
   console.log(filesStore.selectedKeys)
-  console.log(filesStore.openFolder)
-  const rootFolder = filesStore.openFolder
+  console.log(selectedRowKeys)
+  console.log(filesStore.files)
 
   useEffect(() => {
-    filesStore.setSelectedRowKeysStoreStore(selectedRowKeys)
+    console.log(openFoldersState)
+  }, [openFoldersState])
+
+  const rootFolder = filesStore.openFolder
+  const rootKey = filesStore.rootKey
+  useEffect(() => {
+    filesStore.setSelectedRowKeysStore(selectedRowKeys)
   }, [selectedRowKeys])
+
+  useEffect(() => {
+    setSelectedRowKeys([])
+  }, [filesStore.openFolder])
 
   console.log(rootFolder)
   useEffect(() => {
@@ -38,7 +48,7 @@ const DataViewComponent = ({ param, levelUp, setLevelUp }) => {
             }
           })
 
-        console.log('rootFolders', rootFolders)
+        console.log(filesStore.files)
         const rootFiles = filesStore.files
           .filter((item) => item.folderId === rootFolder)
           .map((item) => {
@@ -51,8 +61,9 @@ const DataViewComponent = ({ param, levelUp, setLevelUp }) => {
               mimetype: item.mimetype,
             }
           })
+        console.log(filesStore.files.length)
         console.log('rootFiles', rootFiles)
-        if (rootFolder === '669f6de3daad41e24782120f') {
+        if (rootFolder === rootKey) {
           setInitialData([...rootFolders, ...rootFiles])
         } else {
           setInitialData([
@@ -76,6 +87,7 @@ const DataViewComponent = ({ param, levelUp, setLevelUp }) => {
           })
 
         console.log('rootFolders', rootFolders)
+
         const rootFiles = filesStore.files
           .filter((item) => item.folderId === rootFolder)
           .map((item) => {

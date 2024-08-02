@@ -3,8 +3,7 @@ import { Input, Modal } from 'antd'
 import Draggable from 'react-draggable'
 import { observer } from 'mobx-react-lite'
 import { FilesContext } from 'index'
-const FolderNameModal = ({ open, setOpen, method }) => {
-  console.log(method)
+const EditNameModal = ({ open, setOpen, method, dataToRename }) => {
   const [disabled, setDisabled] = useState(true)
   const [bounds, setBounds] = useState({
     left: 0,
@@ -13,33 +12,36 @@ const FolderNameModal = ({ open, setOpen, method }) => {
     right: 0,
   })
   const [value, setValue] = useState('')
-
   const { filesStore } = useContext(FilesContext)
-
   const date = new Date()
+  const dataType = dataToRename?.type
 
-  console.log(filesStore.openFolder)
+  const { type, id, name } = dataToRename
+    ? dataToRename
+    : { type: null, id: null, name: null }
 
   const { foldername } = filesStore.folders.find(
     (file) => file._id === filesStore.openFolder,
   )
-  console.log(foldername)
 
   const draggleRef = useRef(null)
 
   const handleOk = (e) => {
-    // console.log(e)
     if (method === 'create') {
       filesStore.createFolder({
         foldername: value,
         rootFolderId: filesStore.openFolder,
         creationDate: date,
       })
+      setOpen(false)
+      return
     } else {
-      filesStore.renameFolder(filesStore.openFolder, value)
+      if (dataToRename) {
+        filesStore.editName(dataToRename, value)
+      }
+      setOpen(false)
+      return
     }
-
-    setOpen(false)
   }
   const handleCancel = (e) => {
     setOpen(false)
@@ -74,13 +76,14 @@ const FolderNameModal = ({ open, setOpen, method }) => {
             onMouseOut={() => {
               setDisabled(true)
             }}
-            // fix eslintjsx-a11y/mouse-events-have-key-events
-            // https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/master/docs/rules/mouse-events-have-key-events.md
             onFocus={() => {}}
             onBlur={() => {}}
-            // end
           >
-            Folder Name
+            {method === 'create'
+              ? `Enter Folder Name`
+              : dataType === 'file'
+              ? `Edit File Name`
+              : `Edit Folder Name`}
           </div>
         }
         open={open}
@@ -98,7 +101,7 @@ const FolderNameModal = ({ open, setOpen, method }) => {
         )}
       >
         <Input
-          placeholder={method === 'create' ? 'Enter Folder Name' : foldername}
+          placeholder={method === 'create' ? `Create Folder` : name}
           value={value}
           onChange={(e) => setValue(e.target.value)}
         />
@@ -107,4 +110,4 @@ const FolderNameModal = ({ open, setOpen, method }) => {
   )
 }
 
-export default observer(FolderNameModal)
+export default observer(EditNameModal)

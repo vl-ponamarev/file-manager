@@ -33,6 +33,7 @@ const OneItem = ({ cardData, handleCardClick, selectedCards }) => {
       <Card
         className="card"
         onClick={(event) => handleCardClick(event, cardData)}
+        onContextMenu={(event) => handleCardClick(event, cardData)}
         style={{
           backgroundColor: selectedCards?.includes(cardData.id)
             ? '#e6f4ff'

@@ -12,7 +12,6 @@ class DataController {
         const owner = req.body.owner
         const folder = req.body.folder
 
-        console.log('files-------->>>>>--------', files)
         const fileDocs = files?.map((file) => ({
           owner,
           folderId: folder,
@@ -39,10 +38,11 @@ class DataController {
   }
 
   async getFilesByFolderId(req, res, next) {
+    console.log('req.params.folderId', req.params)
     const folderId = req.params.folderId
 
     try {
-      const files = await DataService.getFilesByFolderId()
+      const files = await DataService.getFilesByFolderId(folderId)
       return res.json(files)
     } catch (error) {
       next(error)
@@ -69,9 +69,27 @@ class DataController {
   }
 
   async editFolder(req, res, next) {
+    console.log('req.params--->>>', req.params)
     try {
       const id = { _id: req.params.id }
-      const post = await DataService.editFolder(id, req.body)
+      const { formData } = req.body
+      console.log('req.body', formData)
+      console.log('req.body', req.body)
+      const post = await DataService.editFolder(id, formData)
+      return res.json(post)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async editFile(req, res, next) {
+    console.log('req.params--->>>', req.params)
+    try {
+      const id = { _id: req.params.id }
+      const { formData } = req.body
+      console.log('req.body', formData)
+      console.log('req.body', req.body)
+      const post = await DataService.editFile(id, formData)
       return res.json(post)
     } catch (error) {
       next(error)
@@ -89,8 +107,9 @@ class DataController {
 
   async deleteFiles(req, res, next) {
     try {
-      await DataService.deleteFiles(req.body)
-      return res.sendStatus(200)
+      const response = await DataService.deleteFiles(req.body)
+      console.log('response', response)
+      return res.status(200).json({ message: 'Success', response })
     } catch (e) {
       next(e)
     }

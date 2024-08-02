@@ -121,7 +121,14 @@ const DataTable = ({
   // }
 
   const handleRowContextMenu = (event, record) => {
+    console.log(record)
+    const { id } = record
     event.preventDefault()
+    if (selectedRowKeys.length <= 1) {
+      setSelectedRowKeys([id])
+      setSelectedRowId(id)
+    }
+
     setContextMenu(
       contextMenu === null
         ? {
@@ -191,7 +198,7 @@ const DataTable = ({
               console.log('record', record)
 
               if (id) {
-                setSelectedRowId(id)
+                // setSelectedRowId(id)
               }
             },
             onDoubleClick: () => {

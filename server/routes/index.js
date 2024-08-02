@@ -27,6 +27,7 @@ router.put('/posts/:id', postController.editPost)
 router.delete('/delete', postController.deleteOnePost)
 
 router.delete('/delete-files', dataController.deleteFiles)
+router.delete('/delete-folders', dataController.deleteFolders)
 router.post('/save-files', dataController.saveFiles)
 router.get('/download-file/:fileId', dataController.downloadFile)
 router.get('/get-files', dataController.getFiles)
@@ -34,7 +35,7 @@ router.get('/files/:folderId', dataController.getFilesByFolderId)
 
 router.post('/create-folder', dataController.createFolder)
 router.get('/get-folders', dataController.getFolders)
-router.put('/folders/:id', dataController.editFolder)
-router.delete('/folders', dataController.deleteFolders)
+router.put('/edit-folder/:id', dataController.editFolder)
+router.put('/edit-file/:id', dataController.editFile)
 
 module.exports = router

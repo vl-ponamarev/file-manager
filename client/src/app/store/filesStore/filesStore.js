@@ -8,8 +8,15 @@ export default class FilesStore {
   createdFolder = []
   selectedKeys = ''
   selectedRowObjects = []
+  openFolderParentsList = []
   selectedRowKeysStore = []
   clearSelectedRowKeysButtonState = false
+  saveOpenKeys = {
+    status: false,
+    folderId: null,
+  }
+
+  rootKey = '669f6de3daad41e24782120f'
 
   constructor() {
     makeAutoObservable(this)
@@ -19,10 +26,18 @@ export default class FilesStore {
     this.files = files
   }
 
+  setOpenFolderParentsList(openFolderParentsList) {
+    this.openFolderParentsList = openFolderParentsList
+  }
+
+  setSaveOpenKeys(saveOpenKeys) {
+    this.saveOpenKeys = saveOpenKeys
+  }
+
   setClearSelectedRowKeysButtonState(clearSelectedRowKeysButtonState) {
     this.clearSelectedRowKeysButtonState = clearSelectedRowKeysButtonState
   }
-  setSelectedRowKeysStoreStore(selectedRowKeysStore) {
+  setSelectedRowKeysStore(selectedRowKeysStore) {
     this.selectedRowKeysStore = selectedRowKeysStore
   }
 
@@ -71,6 +86,7 @@ export default class FilesStore {
       if (response.data.success) {
         this.setCreatedFolder(response.data.data._id)
         this.getFolders()
+        return response
       }
     } catch (err) {
       console.log(err.response?.data?.message)
@@ -84,33 +100,42 @@ export default class FilesStore {
     try {
       const response = await FilesService.saveFiles(formData)
       console.log(response)
+      this.getFolders()
+      this.getFiles()
+      return response
     } catch (error) {
       console.log(error)
     }
   }
 
-  async deleteFile(data) {
+  async deleteData(data) {
+    const { files, folders } = data
+    const res = []
+    console.log(data)
     try {
-      const response = await FilesService.deleteFile(data)
-      console.log(response)
+      const resFiles =
+        files.length > 0 ? await FilesService.deleteFiles(files) : null
+      res.push(resFiles)
+      console.log(resFiles)
+      resFiles !== null ? this.getFiles() : null
+      const resFolders =
+        folders.length > 0 ? await FilesService.deleteFolders(folders) : null
+      resFolders ? this.getFolders() : null
+      res.push(resFolders)
+      console.log(res)
+      return res
     } catch (error) {
       console.log(error)
     }
   }
 
-  async editFileName(id, formData) {
+  async editName(data, formData) {
     try {
-      const response = await FilesService.editFileName(id, formData)
+      const response = await FilesService.editName(data, formData)
       console.log(response)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  async editFolderName(id, formData) {
-    try {
-      const response = await FilesService.editFolderName(id, formData)
-      console.log(response)
+      this.getFolders()
+      this.getFiles()
+      return response
     } catch (error) {
       console.log(error)
     }
