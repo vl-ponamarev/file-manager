@@ -3,41 +3,41 @@ import api from '../../http/index'
 export default class FilesService {
   static async getLimitFiles(limit, offset) {
     try {
-      const response = await api.get('/posts', limit, offset)
-      return response
+      const response = await api.get('/posts', limit, offset);
+      return response;
     } catch (error) {
-      console.log(error)
-      throw error
+      console.log(error);
+      throw error;
     }
   }
 
   static async getFolders() {
     try {
-      const response = await api.get('/get-folders')
-      return response
+      const response = await api.get('/get-folders');
+      return response;
     } catch (error) {
-      console.log(error)
-      throw error
+      console.log(error);
+      throw error;
     }
   }
 
   static async getFiles() {
     try {
-      const response = await api.get('/get-files')
-      return response
+      const response = await api.get('/get-files');
+      return response;
     } catch (error) {
-      console.log(error)
-      throw error
+      console.log(error);
+      throw error;
     }
   }
 
   static async createFolder(folderData) {
     try {
-      const response = await api.post('/create-folder', folderData)
-      return response
+      const response = await api.post('/create-folder', folderData);
+      return response;
     } catch (error) {
-      console.log(error)
-      throw error
+      console.log(error);
+      throw error;
     }
   }
 
@@ -47,61 +47,82 @@ export default class FilesService {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      })
-      return response
+      });
+      return response;
     } catch (error) {
-      console.log(error)
-      throw error
+      console.log(error);
+      throw error;
     }
   }
 
   static async editName(data, formData) {
-    const { id, type } = data
-    console.log(id)
-
-    console.log(data)
-
+    const { id, type } = data;
     try {
-      let response
+      let response;
       if (type === 'folder') {
-        response = await api.put(`/edit-folder/${id}`, { formData })
-        console.log(response)
+        response = await api.put(`/edit-folder/${id}`, { formData });
+        console.log(response);
       }
       if (type === 'file') {
-        response = await api.put(`/edit-file/${id}`, { formData })
-        console.log(response)
+        response = await api.put(`/edit-file/${id}`, { formData });
       }
-      return response
+      return response;
     } catch (error) {
-      console.log(error)
-      throw error
+      console.log(error);
+      throw error;
     }
   }
 
   static async deleteFiles(fileIds) {
     try {
-      console.log(fileIds)
+      console.log(fileIds);
       const response = await api.delete('/delete-files', {
         data: fileIds,
-      })
-      console.log(response)
-      return response
+      });
+      console.log(response);
+      return response;
     } catch (error) {
-      console.log(error)
-      throw error
+      console.log(error);
+      throw error;
     }
   }
   static async deleteFolders(foldersIds) {
     try {
-      console.log(foldersIds)
+      console.log(foldersIds);
       const response = await api.delete('/delete-folders', {
         data: foldersIds,
-      })
-      console.log(response)
-      return response
+      });
+      console.log(response);
+      return response;
     } catch (error) {
-      console.log(error)
-      throw error
+      console.log(error);
+      throw error;
+    }
+  }
+
+  static async moveItems(data) {
+    try {
+      const response = await api.post('/move-items', {
+        data,
+      });
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  static async copyItems(data) {
+    try {
+      const response = await api.post('/copy-items', {
+        data,
+      });
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 }

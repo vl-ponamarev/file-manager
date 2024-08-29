@@ -37,5 +37,7 @@ router.post('/create-folder', dataController.createFolder)
 router.get('/get-folders', dataController.getFolders)
 router.put('/edit-folder/:id', dataController.editFolder)
 router.put('/edit-file/:id', dataController.editFile)
+router.post('/move-items', dataController.moveItems);
+router.post('/copy-items', dataController.copyItems);
 
 module.exports = router

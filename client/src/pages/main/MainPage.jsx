@@ -1,29 +1,29 @@
 import React from 'react'
 import { Avatar, Layout, theme, Typography } from 'antd'
-import DataMenu from 'entities/data-menu/DataMenu'
-import iconImage from 'assets/favicon_io/favicon-32x32.png'
-import Logout from 'features/logout/Logout'
-import { observer } from 'mobx-react-lite'
-import DataViewComponent from 'features/data-view-component/DataViewComponent'
-import DataActionPanel from 'widgets/data-action-panel/DataActionPanel'
-import DataViewPanel from 'widgets/data-view-panel/DataViewPanel'
-const { Header, Content, Sider } = Layout
-const { Text } = Typography
+import DataSideMenu from 'entities/data-side-menu/DataSideMenu';
+import iconImage from 'assets/favicon_io/favicon-32x32.png';
+import Logout from 'features/logout/Logout';
+import { observer } from 'mobx-react-lite';
+import DataViewComponent from 'features/data-view-component/DataViewComponent';
+import DataActionPanel from 'widgets/data-action-panel/DataActionPanel';
+import DataViewPanel from 'widgets/data-view-panel/DataViewPanel';
+const { Header, Content, Sider } = Layout;
+const { Text } = Typography;
 
 const MainPage = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken()
+  } = theme.useToken();
   const linkStyle = {
     textDecoration: 'none',
     color: 'white',
     fontFamily: 'Monospace',
     fontSize: 30,
     marginLeft: 10,
-  }
+  };
 
-  const [param, setParam] = React.useState(true)
-  const [levelUp, setLevelUp] = React.useState(true)
+  const [param, setParam] = React.useState(true);
+  const [levelUp, setLevelUp] = React.useState(true);
 
   return (
     <Layout>
@@ -65,7 +65,7 @@ const MainPage = () => {
               flex: '0 0 255px',
             }}
           >
-            <DataMenu />
+            <DataSideMenu />
           </Sider>
           <Layout
             style={{
@@ -89,16 +89,12 @@ const MainPage = () => {
                 borderRadius: borderRadiusLG,
               }}
             >
-              <DataViewComponent
-                param={param}
-                levelUp={levelUp}
-                setLevelUp={setLevelUp}
-              />
+              <DataViewComponent param={param} levelUp={levelUp} setLevelUp={setLevelUp} />
             </Content>
           </Layout>
         </Layout>
       </Layout>
     </Layout>
-  )
-}
-export default observer(MainPage)
+  );
+};
+export default observer(MainPage);

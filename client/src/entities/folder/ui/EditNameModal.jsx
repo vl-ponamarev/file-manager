@@ -16,33 +16,29 @@ const EditNameModal = ({ open, setOpen, method, dataToRename }) => {
   const date = new Date()
   const dataType = dataToRename?.type
 
-  const { type, id, name } = dataToRename
-    ? dataToRename
-    : { type: null, id: null, name: null }
+  console.log(dataToRename);
 
-  const { foldername } = filesStore.folders.find(
-    (file) => file._id === filesStore.openFolder,
-  )
+  const { type, id, name } = dataToRename ? dataToRename : { type: null, id: null, name: null };
 
-  const draggleRef = useRef(null)
+  const draggleRef = useRef(null);
 
-  const handleOk = (e) => {
-    if (method === 'create') {
+  const handleOk = e => {
+    if (method === 'create' && value !== '') {
       filesStore.createFolder({
         foldername: value,
         rootFolderId: filesStore.openFolder,
         creationDate: date,
-      })
-      setOpen(false)
-      return
+      });
+      setOpen(false);
+      return;
     } else {
-      if (dataToRename) {
-        filesStore.editName(dataToRename, value)
+      if (dataToRename && value !== '') {
+        filesStore.editName(dataToRename, value);
       }
-      setOpen(false)
-      return
+      setOpen(false);
+      return;
     }
-  }
+  };
   const handleCancel = (e) => {
     setOpen(false)
   }

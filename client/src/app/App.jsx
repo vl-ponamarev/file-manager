@@ -1,13 +1,8 @@
-import { withProviders } from './providers/index'
-
-import Router from './Router'
+import { withProviders } from './providers/index';
+import Router from './Router';
 
 const App = () => {
-  return (
-    <div className="app">
-      <Router />
-    </div>
-  )
-}
+  return <Router />;
+};
 
-export default withProviders(App)
+export default withProviders(App);

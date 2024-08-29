@@ -22,6 +22,5 @@ createRoot(document.getElementById('root')).render(
         <App />
       </PostContext.Provider>
     </UserContext.Provider>
-    ,
   </FilesContext.Provider>,
-)
+);

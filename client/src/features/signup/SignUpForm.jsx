@@ -23,72 +23,65 @@ function SignUpForm() {
   }
 
   return (
-    <CssVarsProvider>
-      <main>
-        <ModeToggle />
-        <Sheet
-          sx={{
-            width: 300,
-            mx: 'auto', // margin left & right
-            my: 50, // margin top & botom
-            py: 3, // padding top & bottom
-            px: 2, // padding left & right
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            borderRadius: 'sm',
-            boxShadow: 'md',
-          }}
-          variant="outlined"
-        >
-          <div>
-            <Typography level="h4" component="h1">
-              <b>Welcome!</b>
-            </Typography>
-            <Typography level="body2">Sign up to start.</Typography>
-          </div>
-          <FormControl>
-            <FormLabel>Email</FormLabel>
-            <Input
-              // html input attribute
-              name="email"
-              type="email"
-              placeholder="johndoe@email.com"
-              value={input.email || ''}
-              onChange={inputHandler}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Password</FormLabel>
-            <Input
-              // html input attribute
-              name="password"
-              type="password"
-              placeholder="password"
-              value={input.password || ''}
-              onChange={inputHandler}
-            />
-          </FormControl>
-
-          <Button
-            type="submit"
-            onClick={submitHandler}
-            sx={{ mt: 1 /* margin top */ }}
-          >
-            Sign up
-          </Button>
-
-          <Typography
-            endDecorator={<NavLink to="/login">Login</NavLink>}
-            fontSize="sm"
-            sx={{ alignSelf: 'center' }}
-          >
-            Have an account?
+    <main style={{ height: '100vh', width: '100vw', display: 'flex', alignItems: 'center' }}>
+      <Sheet
+        sx={{
+          width: 300,
+          mx: 'auto', // margin left & right
+          my: 50, // margin top & botom
+          py: 3, // padding top & bottom
+          px: 2, // padding left & right
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          borderRadius: 'sm',
+          boxShadow: 'md',
+        }}
+        variant="outlined"
+      >
+        <div>
+          <Typography level="h4" component="h1">
+            <b>Welcome!</b>
           </Typography>
-        </Sheet>
-      </main>
-    </CssVarsProvider>
-  )
+          <Typography level="body2">Sign up to start.</Typography>
+        </div>
+        <FormControl>
+          <FormLabel>Email</FormLabel>
+          <Input
+            // html input attribute
+            name="email"
+            type="email"
+            placeholder="johndoe@email.com"
+            value={input.email || ''}
+            onChange={inputHandler}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>Password</FormLabel>
+          <Input
+            // html input attribute
+            name="password"
+            type="password"
+            placeholder="password"
+            value={input.password || ''}
+            onChange={inputHandler}
+          />
+        </FormControl>
+
+        <Button type="submit" onClick={submitHandler} sx={{ mt: 1 /* margin top */ }}>
+          Sign up
+        </Button>
+
+        <Typography
+          endDecorator={<NavLink to="/login">Login</NavLink>}
+          fontSize="sm"
+          sx={{ alignSelf: 'center' }}
+        >
+          Have an account?
+        </Typography>
+      </Sheet>
+    </main>
+  );
 }
 
 export default observer(SignUpForm)

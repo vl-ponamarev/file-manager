@@ -1,13 +1,29 @@
 import { Button } from 'antd'
 import React, { useState } from 'react'
-import { ArrowRightOutlined } from '@ant-design/icons'
+import { ArrowRightOutlined } from '@ant-design/icons';
+import { FilesContext } from 'index';
+import { observer } from 'mobx-react-lite';
+import { useContext } from 'react';
+import MoveToCopyToModal from 'entities/folder/ui/MoveToCopyToModal';
 
 const Move = () => {
-  const [open, setOpen] = useState(false)
+  const { filesStore } = useContext(FilesContext);
+  const [open, setOpen] = useState(false);
+  const selectedKeys = filesStore.selectedRowKeysStore;
+
+  console.log(selectedKeys);
 
   const onClick = () => {
-    setOpen(true)
-  }
+    setOpen(true);
+  };
+
+  const modalData = {
+    method: 'move',
+    dataToMove: selectedKeys,
+  };
+
+  console.log(modalData);
+
   return (
     <>
       <Button
@@ -19,11 +35,11 @@ const Move = () => {
         icon={<ArrowRightOutlined />}
         onClick={onClick}
       >
-        RENAME
+        MOVE TO
       </Button>
-      {/* {open && <EditNameModal open={open} setOpen={setOpen} method="move" />} */}
+      {open && <MoveToCopyToModal open={open} setOpen={setOpen} data={modalData} />}
     </>
-  )
-}
+  );
+};
 
-export default Move
+export default observer(Move);

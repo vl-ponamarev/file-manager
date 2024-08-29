@@ -26,12 +26,10 @@ const Router = observer(() => {
       {!isAuth && (
         <>
           <Route path="/" element={<LoginAction />} />
-          <Route path="/signup" element={<SignUpAction />} />{' '}
+          <Route path="/signup" element={<SignUpAction />} />
         </>
       )}
-      {isAuth && !isActivated && (
-        <Route path="/" element={<ActivationPage />} />
-      )}
+      {isAuth && !isActivated && <Route path="/" element={<ActivationPage />} />}
       {isAuth && isActivated && (
         <Route path="/" element={<MainPage />}>
           <Route path="/posts/:id" element={<EditPost />} />
@@ -39,7 +37,7 @@ const Router = observer(() => {
       )}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
-  )
+  );
 })
 
 export default Router

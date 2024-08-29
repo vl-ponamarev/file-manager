@@ -21,8 +21,37 @@ const Delete = () => {
       },
       { files: [], folders: [] },
     )
+
+    const childFolders = [];
+
+    const getChildFolderId = (data, id) => {
+      return data.find(item => item.rootFolderId === id);
+    };
+    const getChildFolderIds = (data, id) => {
+      const folder = getChildFolderId(data, id);
+      if (folder) {
+        childFolders.push(folder._id);
+        getChildFolderIds(data, folder._id);
+      }
+    };
+
+    dataToDelete.folders.forEach(item => {
+      getChildFolderIds(filesStore.folders, item);
+    });
+
+    const allFolders = [...dataToDelete?.folders, ...childFolders];
+    allFolders.forEach(folder => {
+      filesStore.files
+        .filter(file => file.folderId === folder)
+        .forEach(file => dataToDelete.files.push(file._id));
+    });
+    console.log(allFolders);
+
     console.log(dataToDelete)
-    filesStore.deleteData(dataToDelete)
+
+    console.log({ ...dataToDelete, folders: allFolders });
+
+    filesStore.deleteData({ ...dataToDelete, folders: allFolders });
   }
   return (
     <Popconfirm

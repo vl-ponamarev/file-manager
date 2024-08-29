@@ -14,17 +14,14 @@ const DataViewPanel = ({ param, setParam, levelUp, setLevelUp }) => {
   console.log(selectedRowKeysStore)
   const [loading, setLoading] = useState(false)
   const start = () => {
-    setLoading(true)
-    console.log('ok')
+    setLoading(true);
     setTimeout(() => {
-      filesStore.setClearSelectedRowKeysButtonState(
-        !filesStore.clearSelectedRowKeysButtonState,
-      )
-      filesStore.setSelectedRowObjects([])
-      setLoading(false)
-    }, 200)
-  }
-  console.log(filesStore.clearSelectedRowKeysButtonState)
+      filesStore.setClearSelectedRowKeysButtonState(!filesStore.clearSelectedRowKeysButtonState);
+      filesStore.setSelectedRowObjects([]);
+      setLoading(false);
+    }, 200);
+  };
+  console.log(filesStore.selectedRowKeysStore);
 
   return (
     <Row justify="space-between" align="middle">
