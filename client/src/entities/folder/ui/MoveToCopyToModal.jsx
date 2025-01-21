@@ -4,7 +4,7 @@ import Draggable from 'react-draggable';
 import { observer } from 'mobx-react-lite';
 import { FilesContext } from 'index';
 import DataMenu from 'shared/ui/menu/DataMenu';
-const MoveToCopyToModal = ({ open, setOpen, data }) => {
+const MoveToCopyToModal = ({ open, setOpen, data, setSelectedMenuActionInfo = () => {} }) => {
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({
     left: 0,
@@ -12,7 +12,7 @@ const MoveToCopyToModal = ({ open, setOpen, data }) => {
     bottom: 0,
     right: 0,
   });
-  const [menuValue, setMenuValue] = useState(null);
+  const [menuValue, setMenuValue] = useState('669f6de3daad41e24782120f');
   const { filesStore } = useContext(FilesContext);
   const draggleRef = useRef(null);
   const [folders, setFolders] = useState(
@@ -34,11 +34,16 @@ const MoveToCopyToModal = ({ open, setOpen, data }) => {
       const dataToMove = { rootFolderId: menuValue, items };
       filesStore.copyData(dataToMove);
     }
-
+    setSelectedMenuActionInfo(prev => {
+      return { ...prev, action: '' };
+    });
     setOpen(false);
   };
   const handleCancel = e => {
     setOpen(false);
+    setSelectedMenuActionInfo(prev => {
+      return { ...prev, action: '' };
+    });
   };
   const onStart = (_event, uiData) => {
     const { clientWidth, clientHeight } = window.document.documentElement;
@@ -53,6 +58,7 @@ const MoveToCopyToModal = ({ open, setOpen, data }) => {
       bottom: clientHeight - (targetRect.bottom - uiData.y),
     });
   };
+
   return (
     <>
       <Modal

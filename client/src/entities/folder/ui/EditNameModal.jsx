@@ -3,22 +3,25 @@ import { Input, Modal } from 'antd'
 import Draggable from 'react-draggable'
 import { observer } from 'mobx-react-lite'
 import { FilesContext } from 'index'
-const EditNameModal = ({ open, setOpen, method, dataToRename }) => {
-  const [disabled, setDisabled] = useState(true)
+const EditNameModal = ({
+  open,
+  setOpen,
+  method,
+  dataToRename,
+  setSelectedMenuActionInfo = () => {},
+}) => {
+  const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({
     left: 0,
     top: 0,
     bottom: 0,
     right: 0,
-  })
-  const [value, setValue] = useState('')
-  const { filesStore } = useContext(FilesContext)
-  const date = new Date()
-  const dataType = dataToRename?.type
-
-  console.log(dataToRename);
-
+  });
+  const { filesStore } = useContext(FilesContext);
+  const date = new Date();
+  const dataType = dataToRename?.type;
   const { type, id, name } = dataToRename ? dataToRename : { type: null, id: null, name: null };
+  const [value, setValue] = useState(method === 'create' ? '' : name);
 
   const draggleRef = useRef(null);
 
@@ -29,32 +32,41 @@ const EditNameModal = ({ open, setOpen, method, dataToRename }) => {
         rootFolderId: filesStore.openFolder,
         creationDate: date,
       });
+      setSelectedMenuActionInfo(prev => {
+        return { ...prev, action: '' };
+      });
       setOpen(false);
       return;
     } else {
       if (dataToRename && value !== '') {
         filesStore.editName(dataToRename, value);
       }
+      setSelectedMenuActionInfo(prev => {
+        return { ...prev, action: '' };
+      });
       setOpen(false);
       return;
     }
   };
-  const handleCancel = (e) => {
-    setOpen(false)
-  }
+  const handleCancel = e => {
+    setSelectedMenuActionInfo(prev => {
+      return { ...prev, action: '' };
+    });
+    setOpen(false);
+  };
   const onStart = (_event, uiData) => {
-    const { clientWidth, clientHeight } = window.document.documentElement
-    const targetRect = draggleRef.current?.getBoundingClientRect()
+    const { clientWidth, clientHeight } = window.document.documentElement;
+    const targetRect = draggleRef.current?.getBoundingClientRect();
     if (!targetRect) {
-      return
+      return;
     }
     setBounds({
       left: -targetRect.left + uiData.x,
       right: clientWidth - (targetRect.right - uiData.x),
       top: -targetRect.top + uiData.y,
       bottom: clientHeight - (targetRect.bottom - uiData.y),
-    })
-  }
+    });
+  };
   return (
     <>
       <Modal
@@ -66,11 +78,11 @@ const EditNameModal = ({ open, setOpen, method, dataToRename }) => {
             }}
             onMouseOver={() => {
               if (disabled) {
-                setDisabled(false)
+                setDisabled(false);
               }
             }}
             onMouseOut={() => {
-              setDisabled(true)
+              setDisabled(true);
             }}
             onFocus={() => {}}
             onBlur={() => {}}
@@ -85,7 +97,7 @@ const EditNameModal = ({ open, setOpen, method, dataToRename }) => {
         open={open}
         onOk={handleOk}
         onCancel={handleCancel}
-        modalRender={(modal) => (
+        modalRender={modal => (
           <Draggable
             disabled={disabled}
             bounds={bounds}
@@ -99,11 +111,11 @@ const EditNameModal = ({ open, setOpen, method, dataToRename }) => {
         <Input
           placeholder={method === 'create' ? `Create Folder` : name}
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={e => setValue(e.target.value)}
         />
       </Modal>
     </>
-  )
-}
+  );
+};
 
 export default observer(EditNameModal)

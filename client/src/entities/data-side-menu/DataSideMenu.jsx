@@ -5,6 +5,8 @@ import { Menu } from 'antd';
 import { FilesContext } from 'index';
 import './DataMenu.css';
 import DropdownMenu from './ui/DropdownMenu';
+import { handleDeleteOk, handleMenuClick } from 'shared/lib';
+import DeleteModal from 'shared/ui/modal/delete-modal/DeleteModal';
 
 const DataSideMenu = () => {
   const { filesStore } = useContext(FilesContext);
@@ -12,11 +14,11 @@ const DataSideMenu = () => {
   const [filesIds, setFilesIds] = useState([]);
   const rootKey = filesStore.rootKey;
   const [openStateKeys, setOpenStateKeys] = useState([rootKey]);
-
   const rootFolder = filesStore.folders.find(item => item.foldername === 'Folders');
-
   const refOpenKeysLength = useRef(0);
   const refOpenKeys = useRef(null);
+  const [action, setAction] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
     filesStore.getFolders();
@@ -43,7 +45,11 @@ const DataSideMenu = () => {
               <div className="menu-item-wrapper">
                 {obj.foldername}
                 <div className="menu-item-dropdown">
-                  <DropdownMenu handleMenuClick={handleMenuClick} id={item._id} type={'folder'} />
+                  <DropdownMenu
+                    handleMenuClick={e => handleMenuClick(e, setAction, setSelectedId)}
+                    id={item._id}
+                    type={'folder'}
+                  />
                 </div>
               </div>
             ),
@@ -57,7 +63,11 @@ const DataSideMenu = () => {
               <div className="menu-item-wrapper">
                 {obj.foldername}
                 <div className="menu-item-dropdown">
-                  <DropdownMenu handleMenuClick={handleMenuClick} id={item._id} type={'folder'} />
+                  <DropdownMenu
+                    handleMenuClick={e => handleMenuClick(e, setAction, setSelectedId)}
+                    id={item._id}
+                    type={'folder'}
+                  />
                 </div>
               </div>
             ),
@@ -74,7 +84,11 @@ const DataSideMenu = () => {
               <div className="menu-item-wrapper">
                 {item.originalname}
                 <div className="menu-item-dropdown">
-                  <DropdownMenu handleMenuClick={handleMenuClick} id={item._id} type={'file'} />
+                  <DropdownMenu
+                    handleMenuClick={e => handleMenuClick(e, setAction, setSelectedId)}
+                    id={item._id}
+                    type={'file'}
+                  />
                 </div>
               </div>
             ),
@@ -99,11 +113,7 @@ const DataSideMenu = () => {
       setItems([rootFolderPrepared]);
       filesStore.setDataTree([{ ...rootFolderPrepared, children: [...roots] }]);
       if (filesStore.saveOpenKeys.status) {
-        console.log(refOpenKeys.current);
         setOpenStateKeys(refOpenKeys.current);
-        console.log(filesStore.saveOpenKeys.folderId);
-        console.log(filesStore.saveOpenKeys);
-
         filesStore.setOpenFolder(filesStore.saveOpenKeys.folderId);
         filesStore.setSaveOpenKeys({
           status: false,
@@ -112,12 +122,6 @@ const DataSideMenu = () => {
       }
     }
   }, [filesStore.folders, filesStore.files]);
-  console.log(items);
-
-  const handleMenuClick = e => {
-    console.log('Clicked menu item key:', e.key);
-    e.domEvent.stopPropagation();
-  };
 
   useEffect(() => {
     if (filesStore?.selectedKeys?.length === 0) {
@@ -130,10 +134,8 @@ const DataSideMenu = () => {
     const getParentFolderId = (data, id) => {
       const foundItem = data?.find(item => item._id === id);
       if (foundItem) {
-        console.log(foundItem);
         return foundItem.rootFolderId;
       }
-      console.log('No item found with the given id');
       return null;
     };
     const getParentFolderIds = (data, id) => {
@@ -186,8 +188,6 @@ const DataSideMenu = () => {
         getChildFolderIds(filesStore.folders, _id);
 
         if (childFolders.length > 0) {
-          console.log(childFolders);
-
           const newOpenStateKeys = [...openStateKeys]
             .filter(key => key !== deselectedFolder)
             .reduce((array, current) => {
@@ -211,7 +211,6 @@ const DataSideMenu = () => {
     }
   };
   const onSelect = openKeys => {
-    console.log(openKeys);
     if (filesIds.includes(openKeys.key)) return;
     filesStore.setOpenFolder(openKeys.key);
     refOpenKeys.current = openKeys.keyPath;
@@ -219,7 +218,6 @@ const DataSideMenu = () => {
   };
 
   const onDeselect = openKeys => {
-    console.log(openKeys);
     if (openKeys.key !== rootKey) {
       const { rootFolderId } = filesStore.folders.find(item => item._id === openKeys.key);
       filesStore.setOpenFolder(rootFolderId);
@@ -229,21 +227,31 @@ const DataSideMenu = () => {
   };
 
   return (
-    <Menu
-      onOpenChange={onOpenChange}
-      onSelect={onSelect}
-      onDeselect={onDeselect}
-      openKeys={openStateKeys}
-      defaultOpenKeys={[rootKey]}
-      style={{
-        width: 400,
-      }}
-      selectedKeys={[filesStore.openFolder] ?? [rootKey]}
-      mode="inline"
-      items={items}
-      selectable={true}
-      danger={true}
-    />
+    <>
+      <Menu
+        onOpenChange={onOpenChange}
+        onSelect={onSelect}
+        onDeselect={onDeselect}
+        openKeys={openStateKeys}
+        defaultOpenKeys={[rootKey]}
+        style={{
+          width: 400,
+        }}
+        selectedKeys={[filesStore.openFolder] ?? [rootKey]}
+        mode="inline"
+        items={items}
+        selectable={true}
+        danger={true}
+      />
+      {action === 'delete' && (
+        <DeleteModal
+          action={action}
+          handleDeleteOk={handleDeleteOk}
+          setAction={setAction}
+          selectedId={selectedId}
+        />
+      )}
+    </>
   );
 };
 export default observer(DataSideMenu);

@@ -1,10 +1,10 @@
 import { Button } from 'antd'
 import React, { useState } from 'react'
-import { EditOutlined } from '@ant-design/icons'
-import EditNameModal from 'entities/folder/ui/EditNameModal'
-import { FilesContext } from 'index'
-import { observer } from 'mobx-react-lite'
-import { useContext } from 'react'
+import { EditOutlined } from '@ant-design/icons';
+import { FilesContext } from 'index';
+import { observer } from 'mobx-react-lite';
+import { useContext } from 'react';
+import { EditNameModal } from 'entities/folder/ui';
 
 const Rename = () => {
   const { filesStore } = useContext(FilesContext)
@@ -13,30 +13,26 @@ const Rename = () => {
   const [dataToRename, setDataToRename] = useState(null)
 
   const onClick = () => {
-    const selectedItem = filesStore.selectedRowKeysStore[0]
-    console.log(selectedItem)
+    const selectedItem = filesStore.selectedRowKeysStore[0];
     if (selectedItem) {
       const file = filesStore.files.find((file) => file._id === selectedItem)
       if (file) {
-        console.log(file)
-        setOpen(true)
+        setOpen(true);
         setDataToRename({
           type: 'file',
           id: file._id,
           name: file.originalname,
-        })
-        return
+        });
+        return;
       } else {
-        setOpen(true)
-        const folder = filesStore.folders.find(
-          (folder) => folder._id === selectedItem,
-        )
+        setOpen(true);
+        const folder = filesStore.folders.find(folder => folder._id === selectedItem);
         setDataToRename({
           type: 'folder',
           id: folder._id,
           name: folder.foldername,
-        })
-        return
+        });
+        return;
       }
     }
   }

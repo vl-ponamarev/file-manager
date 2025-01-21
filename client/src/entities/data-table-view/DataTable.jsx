@@ -1,54 +1,21 @@
 import React, { useContext, useState } from 'react'
-import { Table, Menu, Dropdown, Flex } from 'antd'
-import './DataTable.css'
-import { FilesContext } from 'index'
-import dayjs from 'dayjs'
-import { observer } from 'mobx-react-lite'
-import {
-  FolderOutlined,
-  MoreOutlined,
-  FileOutlined,
-  ArrowUpOutlined,
-} from '@ant-design/icons'
+import { Table, Dropdown, Flex } from 'antd';
+import './DataTable.css';
+import { FilesContext } from 'index';
+import dayjs from 'dayjs';
+import { observer } from 'mobx-react-lite';
+import { FolderOutlined, MoreOutlined, FileOutlined, ArrowUpOutlined } from '@ant-design/icons';
+import DataAdditionalMenu from 'shared/ui/menu/DataAdditionalMenu';
+import { handleDeleteOk } from 'shared/lib';
+import DeleteModal from 'shared/ui/modal/delete-modal/DeleteModal';
 
-const DataTable = ({
-  initialData,
-  setLevelUp,
-  selectedRowKeys,
-  setSelectedRowKeys,
-}) => {
-  console.log(initialData)
-  const { filesStore } = useContext(FilesContext)
-  const [contextMenu, setContextMenu] = useState(null)
-  const [selectedRowId, setSelectedRowId] = useState(null)
+const DataTable = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRowKeys }) => {
+  const { filesStore } = useContext(FilesContext);
+  const [contextMenu, setContextMenu] = useState(null);
+  const [selectedRowId, setSelectedRowId] = useState(null);
+  const [action, setAction] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
 
-  console.log(selectedRowId)
-
-  console.log(filesStore.selectedRowKeys)
-  const menu = (record) => (
-    <Menu>
-      <Menu.Item
-        key="1"
-        onClick={(e) => handleMenuClick('Action 1', record, e)}
-      >
-        Action 1
-      </Menu.Item>
-      <Menu.Item
-        key="2"
-        onClick={(e) => handleMenuClick('Action 2', record, e)}
-      >
-        Action 2
-      </Menu.Item>
-    </Menu>
-  )
-  console.log('initialData', initialData)
-  const handleMenuClick = (action, record, e) => {
-    console.log('Action:', action)
-    console.log('Record:', record)
-    console.log('Event:', e)
-    setContextMenu(null)
-    // filesStore.setSelectedRowKeys([])
-  }
   const columns = [
     {
       title: '',
@@ -56,13 +23,13 @@ const DataTable = ({
       key: 'icon',
       render: (text, record) => {
         if (record.type === 'folder') {
-          return <FolderOutlined />
+          return <FolderOutlined />;
         } else if (record.type === 'file') {
-          return <FileOutlined />
+          return <FileOutlined />;
         } else if (record.type === 'back') {
-          return <ArrowUpOutlined />
+          return <ArrowUpOutlined />;
         }
-        return null
+        return null;
       },
       width: '2%',
     },
@@ -76,16 +43,15 @@ const DataTable = ({
       title: 'Data Modified',
       dataIndex: 'dataModified',
       key: 'dataModified',
-      sorter: (a, b) =>
-        dayjs(a.dataModified).isBefore(dayjs(b.dataModified)) ? -1 : 1,
-      width: '10%',
+      sorter: (a, b) => (dayjs(a.dataModified).isBefore(dayjs(b.dataModified)) ? -1 : 1),
+      width: '20%',
     },
     {
       title: 'File Size',
       dataIndex: 'fileSize',
       key: 'fileSize',
       sorter: (a, b) => a.fileSize - b.fileSize,
-      width: '10%',
+      width: '15%',
     },
     {
       title: 'File Type',
@@ -101,32 +67,24 @@ const DataTable = ({
       render: (text, record) => {
         if (record.type === 'folder' || record.type === 'file') {
           return (
-            <Dropdown overlay={menu(record)} trigger={['click']}>
-              <MoreOutlined
-                className="action-button"
-                style={{ fontSize: '20px' }}
-              />
+            <Dropdown overlay={DataAdditionalMenu(record)} trigger={['click']}>
+              <MoreOutlined className="action-button" style={{ fontSize: '20px' }} />
             </Dropdown>
-          )
+          );
         } else if (record.type === 'back') {
-          return null
+          return null;
         }
       },
       width: '2%',
     },
-  ]
-
-  // const onSelectChange = (selectedRowKeys) => {
-  //   filesStore.setSelectedRowKeys(selectedRowKeys)
-  // }
+  ];
 
   const handleRowContextMenu = (event, record) => {
-    console.log(record)
-    const { id } = record
-    event.preventDefault()
+    const { id } = record;
+    event.preventDefault();
     if (selectedRowKeys.length <= 1) {
-      setSelectedRowKeys([id])
-      setSelectedRowId(id)
+      setSelectedRowKeys([id]);
+      setSelectedRowId(id);
     }
 
     setContextMenu(
@@ -137,45 +95,34 @@ const DataTable = ({
             record,
           }
         : null,
-    )
-  }
+    );
+  };
 
-  const onSelectChange = (newSelectedRowKeys) => {
-    console.log(newSelectedRowKeys)
-    setSelectedRowKeys(newSelectedRowKeys)
-  }
-  console.log(selectedRowKeys)
+  const onSelectChange = newSelectedRowKeys => {
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
     onSelect: (record, selected, selectedRows) => {
-      const newSelectedRowObjects = [...filesStore.selectedRowObjects]
+      const newSelectedRowObjects = [...filesStore.selectedRowObjects];
       if (selectedRowKeys.includes(record.id)) {
-        filesStore.setSelectedRowObjects(
-          newSelectedRowObjects.filter((obj) => obj.id !== record.id),
-        )
+        filesStore.setSelectedRowObjects(newSelectedRowObjects.filter(obj => obj.id !== record.id));
       } else {
-        newSelectedRowObjects.push({ record })
-        filesStore.setSelectedRowObjects(newSelectedRowObjects)
+        newSelectedRowObjects.push({ record });
+        filesStore.setSelectedRowObjects(newSelectedRowObjects);
       }
     },
     onSelectAll: (selected, selectedRows, changeRows) => {
       if (selected) {
-        filesStore.setSelectedRowObjects([
-          ...filesStore.selectedRowObjects,
-          ...changeRows,
-        ])
+        filesStore.setSelectedRowObjects([...filesStore.selectedRowObjects, ...changeRows]);
       } else {
-        filesStore.setSelectedRowObjects([])
+        filesStore.setSelectedRowObjects([]);
       }
-      console.log(selected)
-      console.log(changeRows)
-      console.log(selectedRows)
     },
-  }
+  };
+  const hasSelected = selectedRowKeys.length > 0;
 
-  console.log(filesStore.selectedRowObjects)
-  const hasSelected = selectedRowKeys.length > 0
   return (
     <Flex gap="middle" vertical>
       <Flex align="center" gap="middle">
@@ -187,47 +134,43 @@ const DataTable = ({
         columns={columns}
         dataSource={initialData}
         rowClassName={(record, index) => {
-          // console.log(record, index)
-          return record.id === selectedRowId ? 'selected-row' : ''
+          return record.id === selectedRowId ? 'selected-row' : '';
         }}
         onRow={(record, index) => {
           return {
-            onContextMenu: (event) => handleRowContextMenu(event, record),
-            onClick: () => {
-              const { id } = record
-              console.log('record', record)
-
-              if (id) {
-                // setSelectedRowId(id)
-              }
-            },
+            onContextMenu: event => handleRowContextMenu(event, record),
+            // onClick: () => {
+            //   // const { id } = record
+            // },
             onDoubleClick: () => {
-              const { id } = record
-              console.log(record)
-              console.log(id)
+              const { id } = record;
               if (id !== 'back' && record.type === 'folder') {
-                console.log('ok')
-                setSelectedRowKeys([])
-                filesStore.setOpenFolder(id)
-                filesStore.setSelectedKeys([id])
+                setSelectedRowKeys([]);
+                filesStore.setOpenFolder(id);
+                filesStore.setSelectedKeys([id]);
               } else if (record.type === 'file') {
-                console.log('ok')
-                return
+                return;
               } else {
-                console.log('ok')
-                setLevelUp((prev) => !prev)
+                setLevelUp(prev => !prev);
               }
             },
-          }
+          };
         }}
       />
       {contextMenu && (
         <Dropdown
-          overlay={menu}
+          overlay={() =>
+            DataAdditionalMenu(
+              contextMenu?.record?.id,
+              setAction,
+              setSelectedId,
+              contextMenu?.record?.type,
+            )
+          }
           trigger={['click']}
           visible
-          onVisibleChange={(visible) => !visible && setContextMenu(null)}
-          getPopupContainer={(triggerNode) => triggerNode.parentNode}
+          onVisibleChange={visible => !visible && setContextMenu(null)}
+          getPopupContainer={triggerNode => triggerNode.parentNode}
         >
           <div
             style={{
@@ -242,8 +185,16 @@ const DataTable = ({
           />
         </Dropdown>
       )}
+      {action === 'delete' && (
+        <DeleteModal
+          action={action}
+          handleDeleteOk={handleDeleteOk}
+          setAction={setAction}
+          selectedId={selectedId}
+        />
+      )}
     </Flex>
-  )
-}
+  );
+};
 
 export default observer(DataTable)

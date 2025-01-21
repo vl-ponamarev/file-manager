@@ -1,6 +1,5 @@
 module.exports = class ApiError extends Error {
   status;
-
   errors;
 
   constructor(message, status, errors = []) {
@@ -9,7 +8,7 @@ module.exports = class ApiError extends Error {
     this.errors = errors;
   }
 
-  static UnoutorizedError() {
+  static UnauthorizedError() {
     return new ApiError(401, 'Пользователь не авторизован');
   }
 

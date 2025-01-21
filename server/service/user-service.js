@@ -48,9 +48,8 @@ class UserService {
   async login(email, password) {
     const user = await UserModel.findOne({ email })
     if (!user) {
-      throw ApiError.BadRequest('Пользователь с таким email не найден')
+      throw ApiError.BadRequest('Пользователь с таким email не найден');
     }
-    console.log('user', user)
     const isPasswordEquals = await bcrypt.compare(password, user.password)
     if (!isPasswordEquals) {
       throw ApiError.BadRequest('Неверный пароль')
@@ -72,12 +71,12 @@ class UserService {
 
   async refresh(refreshToken) {
     if (!refreshToken) {
-      throw ApiError.UnoutorizedError()
+      throw ApiError.UnauthorizedError()
     }
     const userData = tokenService.validateRefreshToken(refreshToken)
     const tokenFromDb = await tokenService.findToken(refreshToken)
     if (!userData || !tokenFromDb) {
-      throw ApiError.UnoutorizedError()
+      throw ApiError.UnauthorizedError()
     }
     const user = await UserModel.findById(userData.id)
     const userDto = new UserDto(user)

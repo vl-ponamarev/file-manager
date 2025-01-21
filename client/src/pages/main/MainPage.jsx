@@ -2,11 +2,9 @@ import React from 'react'
 import { Avatar, Layout, theme, Typography } from 'antd'
 import DataSideMenu from 'entities/data-side-menu/DataSideMenu';
 import iconImage from 'assets/favicon_io/favicon-32x32.png';
-import Logout from 'features/logout/Logout';
 import { observer } from 'mobx-react-lite';
-import DataViewComponent from 'features/data-view-component/DataViewComponent';
-import DataActionPanel from 'widgets/data-action-panel/DataActionPanel';
-import DataViewPanel from 'widgets/data-view-panel/DataViewPanel';
+import { DataActionPanel, DataViewComponent, DataViewPanel } from 'widgets';
+import { LogOut } from 'features';
 const { Header, Content, Sider } = Layout;
 const { Text } = Typography;
 
@@ -40,7 +38,7 @@ const MainPage = () => {
           <Avatar alt="icon" src={iconImage} size={40} />
           <Text style={linkStyle}> Family File Store</Text>
         </div>
-        <Logout />
+        <LogOut />
       </Header>
       <Layout>
         <Header
@@ -84,7 +82,7 @@ const MainPage = () => {
               style={{
                 padding: 24,
                 margin: 0,
-                minHeight: '78vh',
+                height: '72vh',
                 background: colorBgContainer,
                 borderRadius: borderRadiusLG,
               }}
@@ -97,4 +95,5 @@ const MainPage = () => {
     </Layout>
   );
 };
-export default observer(MainPage);
+export const ObservedMainPage = observer(MainPage);
+// export default observer(MainPage);

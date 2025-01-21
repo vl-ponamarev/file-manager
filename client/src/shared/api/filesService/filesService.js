@@ -6,7 +6,7 @@ export default class FilesService {
       const response = await api.get('/posts', limit, offset);
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
@@ -16,7 +16,7 @@ export default class FilesService {
       const response = await api.get('/get-folders');
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
@@ -26,7 +26,7 @@ export default class FilesService {
       const response = await api.get('/get-files');
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
@@ -36,7 +36,7 @@ export default class FilesService {
       const response = await api.post('/create-folder', folderData);
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
@@ -50,7 +50,7 @@ export default class FilesService {
       });
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
@@ -61,41 +61,36 @@ export default class FilesService {
       let response;
       if (type === 'folder') {
         response = await api.put(`/edit-folder/${id}`, { formData });
-        console.log(response);
       }
       if (type === 'file') {
         response = await api.put(`/edit-file/${id}`, { formData });
       }
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
 
   static async deleteFiles(fileIds) {
     try {
-      console.log(fileIds);
       const response = await api.delete('/delete-files', {
         data: fileIds,
       });
-      console.log(response);
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
   static async deleteFolders(foldersIds) {
     try {
-      console.log(foldersIds);
       const response = await api.delete('/delete-folders', {
         data: foldersIds,
       });
-      console.log(response);
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
@@ -105,7 +100,6 @@ export default class FilesService {
       const response = await api.post('/move-items', {
         data,
       });
-      console.log(response);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -118,8 +112,19 @@ export default class FilesService {
       const response = await api.post('/copy-items', {
         data,
       });
-      console.log(response);
       return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  static async downloadData(data) {
+    try {
+      const response = await api.post(`/download-data`, data, {
+        responseType: 'blob',
+      });
+      return response;
     } catch (error) {
       console.error(error);
       throw error;

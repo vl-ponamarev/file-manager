@@ -4,15 +4,13 @@ import { ArrowUpOutlined, ClearOutlined } from '@ant-design/icons'
 import { DataViewButton } from 'shared/ui/button'
 import { observer } from 'mobx-react-lite'
 import { FilesContext } from 'index'
-import BreadcrumbsComponent from 'features/breadcrumbs/BreadcrumbsComponent'
+import { Breadcrumbs } from 'features';
 
 const DataViewPanel = ({ param, setParam, levelUp, setLevelUp }) => {
   const { filesStore } = useContext(FilesContext)
   const selectedRowKeysStore = filesStore.selectedRowKeysStore
-  const hasSelected = selectedRowKeysStore.length > 0
-
-  console.log(selectedRowKeysStore)
-  const [loading, setLoading] = useState(false)
+  const hasSelected = selectedRowKeysStore.length > 0;
+  const [loading, setLoading] = useState(false);
   const start = () => {
     setLoading(true);
     setTimeout(() => {
@@ -21,7 +19,6 @@ const DataViewPanel = ({ param, setParam, levelUp, setLevelUp }) => {
       setLoading(false);
     }, 200);
   };
-  console.log(filesStore.selectedRowKeysStore);
 
   return (
     <Row justify="space-between" align="middle">
@@ -35,7 +32,7 @@ const DataViewPanel = ({ param, setParam, levelUp, setLevelUp }) => {
         >
           <ArrowUpOutlined />
         </Button>
-        <BreadcrumbsComponent />
+        <Breadcrumbs />
       </Space>
       <Space>
         <Button
@@ -55,7 +52,7 @@ const DataViewPanel = ({ param, setParam, levelUp, setLevelUp }) => {
         <DataViewButton setParam={setParam} param={param} />
       </Space>
     </Row>
-  )
+  );
 }
 
 export default observer(DataViewPanel)

@@ -1,11 +1,6 @@
 import { Suspense } from 'react'
-import { BrowserRouter } from 'react-router-dom'
-import { StyledBackdrop } from 'shared/ui/backdrop'
+import { BrowserRouter } from 'react-router-dom';
 
-export const withRouter = (component) => () => {
-  return (
-    <BrowserRouter>
-      <Suspense fallback={<StyledBackdrop />}>{component()}</Suspense>
-    </BrowserRouter>
-  )
-}
+export const withRouter = component => () => {
+  return <BrowserRouter>{component()}</BrowserRouter>;
+};

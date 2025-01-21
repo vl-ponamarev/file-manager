@@ -1,30 +1,28 @@
-import React, { useCallback, useContext, useState } from 'react'
-import './DataListView.css'
-import MemoOneItem from './ui/OneItem'
-import { FilesContext } from 'index'
-import { Dropdown, Menu } from 'antd'
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import './DataListView.css';
+import MemoOneItem from './ui/OneItem';
+import { FilesContext } from 'index';
+import { Dropdown } from 'antd';
+import DataAdditionalMenu from 'shared/ui/menu/DataAdditionalMenu';
+import { handleDeleteOk } from 'shared/lib';
+import DeleteModal from 'shared/ui/modal/delete-modal/DeleteModal';
+import { EditNameModal, MoveToCopyToModal } from 'entities/folder/ui';
 
 const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRowKeys }) => {
   const { filesStore } = useContext(FilesContext);
   const [clickTimeout, setClickTimeout] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
-
-  const menu = record => (
-    <Menu>
-      <Menu.Item key="1" onClick={e => handleMenuClick('Action 1', record, e)}>
-        Action 1
-      </Menu.Item>
-      <Menu.Item key="2" onClick={e => handleMenuClick('Action 2', record, e)}>
-        Action 2
-      </Menu.Item>
-    </Menu>
-  );
-  const handleMenuClick = (action, record, e) => {
-    console.log('Action:', action);
-    console.log('Record:', record);
-    console.log('Event:', e);
-    setContextMenu(null);
-  };
+  const [selectedMenuActionInfo, setSelectedMenuActionInfo] = useState({
+    id: '',
+    action: '',
+    type: '',
+  });
+  const [open, setOpen] = useState(false);
+  const selectedKeys = filesStore.selectedRowKeysStore;
+  const [modalData, setModalData] = useState({
+    method: '',
+    dataToMove: [],
+  });
 
   const handleCardClick = useCallback(
     (event, cardData) => {
@@ -46,17 +44,13 @@ const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRow
       if (clickTimeout) {
         clearTimeout(clickTimeout);
         setClickTimeout(null);
-        console.log('Double-click event', event);
         if (id !== 'back' && cardData.type === 'folder') {
-          console.log('ok', id);
           setSelectedRowKeys([]);
           filesStore.setOpenFolder(id);
           filesStore.setSelectedKeys([id]);
         } else if (cardData.type === 'file') {
-          console.log('ok');
           return;
         } else {
-          console.log('ok');
           setLevelUp(prev => !prev);
         }
       } else {
@@ -72,13 +66,24 @@ const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRow
           } else if (event.type === 'click') {
             setSelectedRowKeys([id]);
           }
-          console.log('Single-click event', event);
         }, 200);
         setClickTimeout(timeout);
       }
     },
     [clickTimeout, setSelectedRowKeys],
   );
+  useEffect(() => {
+    setModalData({
+      method: selectedMenuActionInfo?.action === 'move' ? 'move' : 'copy',
+      dataToMove: selectedKeys,
+    });
+  }, [selectedMenuActionInfo.action]);
+
+  const dataToRename = {
+    type: selectedMenuActionInfo.type,
+    id: selectedMenuActionInfo.id,
+    name: contextMenu?.record?.dataName,
+  };
 
   return (
     <div className="data-list-view">
@@ -93,7 +98,16 @@ const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRow
 
       {contextMenu && (
         <Dropdown
-          overlay={menu}
+          overlay={() =>
+            DataAdditionalMenu(
+              contextMenu?.record?.id,
+              setSelectedMenuActionInfo,
+              // setAction,
+              // setSelectedId,
+              contextMenu?.record?.type,
+              setOpen,
+            )
+          }
           trigger={['click']}
           visible
           onVisibleChange={visible => !visible && setContextMenu(null)}
@@ -112,8 +126,40 @@ const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRow
           />
         </Dropdown>
       )}
+      {selectedMenuActionInfo?.action === 'delete' && (
+        <DeleteModal
+          selectedMenuActionInfo={selectedMenuActionInfo}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
+          handleDeleteOk={handleDeleteOk}
+        />
+      )}
+      {selectedMenuActionInfo?.action === 'move' && (
+        <MoveToCopyToModal
+          open={open}
+          setOpen={setOpen}
+          data={modalData}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
+        />
+      )}
+      {selectedMenuActionInfo?.action === 'copy' && (
+        <MoveToCopyToModal
+          open={open}
+          setOpen={setOpen}
+          data={modalData}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
+        />
+      )}
+      {selectedMenuActionInfo?.action === 'rename' && (
+        <EditNameModal
+          open={open}
+          setOpen={setOpen}
+          method="edit"
+          dataToRename={dataToRename}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
+        />
+      )}
     </div>
   );
 };
 
-export default DataListView
+export default DataListView;

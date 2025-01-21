@@ -60,7 +60,6 @@ export default class FilesStore {
   }
 
   setOpenFolder(openFolder) {
-    console.log(openFolder);
     this.openFolder = openFolder;
   }
 
@@ -73,7 +72,7 @@ export default class FilesStore {
       const response = await FilesService.getFiles();
       this.setFiles(response.data.reverse());
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 
@@ -82,7 +81,7 @@ export default class FilesStore {
       const response = await FilesService.getFolders();
       this.setFolders(response.data.reverse());
     } catch (err) {
-      console.log(err.response?.data?.message);
+      console.error(err.response?.data?.message);
     }
   }
 
@@ -95,33 +94,27 @@ export default class FilesStore {
         return response;
       }
     } catch (err) {
-      console.log(err.response?.data?.message);
+      console.error(err.response?.data?.message);
     }
   }
 
   async saveFiles(formData) {
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
     try {
       const response = await FilesService.saveFiles(formData);
-      console.log(response);
       this.getFolders();
       this.getFiles();
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
   async deleteData(data) {
     const { files, folders } = data;
     const res = [];
-    console.log(data);
     try {
       const resFiles = files.length > 0 ? await FilesService.deleteFiles(files) : null;
       res.push(resFiles);
-      console.log(resFiles);
       if (resFiles !== null) {
         this.getFiles();
       }
@@ -130,22 +123,20 @@ export default class FilesStore {
         this.getFolders();
       }
       res.push(resFolders);
-      console.log(res);
       return res;
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
   async editName(data, formData) {
     try {
       const response = await FilesService.editName(data, formData);
-      console.log(response);
       this.getFolders();
       this.getFiles();
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -156,7 +147,7 @@ export default class FilesStore {
       this.getFiles();
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -167,7 +158,16 @@ export default class FilesStore {
       this.getFiles();
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
+    }
+  }
+
+  async downloadData(data) {
+    try {
+      const response = await FilesService.downloadData(data);
+      return response;
+    } catch (error) {
+      console.error(error);
     }
   }
 }

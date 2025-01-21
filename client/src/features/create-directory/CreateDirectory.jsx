@@ -1,7 +1,7 @@
 import { Button } from 'antd'
 import React, { useState } from 'react'
 import { FolderAddOutlined } from '@ant-design/icons'
-import EditNameModal from 'entities/folder/ui/EditNameModal'
+import { EditNameModal } from 'entities/folder/ui';
 
 const CreateDirectory = () => {
   const [open, setOpen] = useState(false)

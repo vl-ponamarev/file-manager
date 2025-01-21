@@ -6,7 +6,7 @@ export default class PostService {
       const response = await api.get('/posts', limit, offset)
       return response
     } catch (error) {
-      console.log(error)
+      console.error(error)
       throw error
     }
   }
@@ -20,7 +20,7 @@ export default class PostService {
       })
       return response
     } catch (error) {
-      console.log(error)
+      console.error(error)
       throw error
     }
   }
@@ -34,7 +34,7 @@ export default class PostService {
       })
       return response
     } catch (error) {
-      console.log(error)
+      console.error(error)
       throw error
     }
   }
@@ -50,7 +50,7 @@ export default class PostService {
 
       return response
     } catch (error) {
-      console.log(error)
+      console.error(error)
       throw error
     }
   }

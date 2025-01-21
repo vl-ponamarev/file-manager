@@ -6,7 +6,7 @@ export default class AuthService {
       const response = await api.post('/login', email, password);
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
@@ -16,12 +16,20 @@ export default class AuthService {
       const response = await api.post('/registration', email, password);
       return response;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
 
   static async logout() {
-    return api.post('/logout');
+    try {
+      const response = await api.post('/logout');
+      console.error(response);
+
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }

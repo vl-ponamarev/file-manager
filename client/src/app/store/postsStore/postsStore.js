@@ -24,7 +24,7 @@ export default class PostStore {
       const response = await PostService.getLimitPosts();
       this.setPosts(response.data.reverse());
     } catch (err) {
-      console.log(err.response?.data?.message);
+      console.error(err.response?.data?.message);
     }
   }
 
@@ -32,7 +32,7 @@ export default class PostStore {
     try {
       await PostService.createPost(formData);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -40,7 +40,7 @@ export default class PostStore {
     try {
       await PostService.deletePost(data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -48,7 +48,7 @@ export default class PostStore {
     try {
       await PostService.editPost(id, formData);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 }

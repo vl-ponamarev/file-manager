@@ -10,14 +10,12 @@ const BreadcrumbsComponent = () => {
     { foldername: 'Folders', id: rootFolderId },
   ])
 
-  const handleBreadcrumbClick = (e) => {
-    // console.log('Clicked item:', e.target.innerText)
-    // console.log('Clicked item id:', e.target.dataset.id)
+  const handleBreadcrumbClick = e => {
     if (e.target.dataset.id === rootFolderId) {
-      setFoldersList([{ foldername: 'Folders', id: rootFolderId }])
+      setFoldersList([{ foldername: 'Folders', id: rootFolderId }]);
     }
-    filesStore.setOpenFolder(e.target.dataset.id)
-  }
+    filesStore.setOpenFolder(e.target.dataset.id);
+  };
 
   useEffect(() => {
     const data = []

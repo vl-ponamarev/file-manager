@@ -7,28 +7,23 @@ import { observer } from 'mobx-react-lite'
 
 const UploadFileAntd = () => {
   const { userStore } = React.useContext(UserContext)
-  const { filesStore } = React.useContext(FilesContext)
+  const { filesStore } = React.useContext(FilesContext);
+  const [files, setFiles] = React.useState(null);
+  const fileInputRef = React.useRef(null);
+  const rootKey = filesStore.rootKey;
 
-  const [files, setFiles] = React.useState(null)
-  const fileInputRef = React.useRef(null)
-  const rootKey = filesStore.rootKey
-
-  const handleFileChange = (event) => {
-    console.log(event.target)
-    setFiles(event.target.files) // Uncomment this line
-  }
+  const handleFileChange = event => {
+    setFiles(event.target.files);
+  };
 
   const handleClick = () => {
-    // Programmatically click the hidden file input element
-    // when the Button is clicked
-    fileInputRef.current.click()
-  }
+    fileInputRef.current.click();
+  };
 
   useEffect(() => {
     const handleSave = async () => {
       if (files && files.length > 0) {
-        const fileFolder = filesStore.openFolder
-        console.log('fileFolder', fileFolder)
+        const fileFolder = filesStore.openFolder;
         const formData = new FormData()
         formData.append('owner', userStore.user.id)
         formData.append('folder', fileFolder)
@@ -37,14 +32,12 @@ const UploadFileAntd = () => {
         }
 
         try {
-          const response = await filesStore.saveFiles(formData)
-          console.log(response)
+          const response = await filesStore.saveFiles(formData);
           if (response.status === 200 && response.data) {
-            console.log('oki')
             filesStore.setSaveOpenKeys({
               status: true,
               folderId: response.data[0].folderId,
-            })
+            });
           }
         } catch (error) {
           console.error('Error uploading files:', error)

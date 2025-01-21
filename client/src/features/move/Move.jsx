@@ -4,14 +4,12 @@ import { ArrowRightOutlined } from '@ant-design/icons';
 import { FilesContext } from 'index';
 import { observer } from 'mobx-react-lite';
 import { useContext } from 'react';
-import MoveToCopyToModal from 'entities/folder/ui/MoveToCopyToModal';
+import { MoveToCopyToModal } from 'entities/folder/ui';
 
 const Move = () => {
   const { filesStore } = useContext(FilesContext);
   const [open, setOpen] = useState(false);
   const selectedKeys = filesStore.selectedRowKeysStore;
-
-  console.log(selectedKeys);
 
   const onClick = () => {
     setOpen(true);
@@ -21,8 +19,6 @@ const Move = () => {
     method: 'move',
     dataToMove: selectedKeys,
   };
-
-  console.log(modalData);
 
   return (
     <>

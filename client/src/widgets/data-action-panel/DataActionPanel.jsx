@@ -1,23 +1,35 @@
-import { Space } from 'antd'
-import Copy from 'features/copy/Copy';
-import CreateDirectory from 'features/create-directory/CreateDirectory';
-import Delete from 'features/delete/Delete';
-import Move from 'features/move/Move';
-import Rename from 'features/rename/Rename'
-import UploadFiles from 'features/uploadFile/UploadFiles'
-import React from 'react'
+import { Space } from 'antd';
+import { FilesContext } from 'index';
+import React, { useContext } from 'react';
+import { observer } from 'mobx-react-lite';
+import { Copy, Delete, Move, Rename, Upload, CreateDir } from 'features';
+import Download from 'features/download/Download';
 
 const DataActionPanel = () => {
+  const { filesStore } = useContext(FilesContext);
+  const openFolder = filesStore.openFolder;
+  const selectedRowKeysStore = filesStore.selectedRowKeysStore;
+  const addButtons = selectedRowKeysStore.length > 0 && selectedRowKeysStore[0] !== 'back';
+
   return (
     <Space>
-      <CreateDirectory />
-      <UploadFiles />
-      <Rename />
-      <Delete />
-      <Move />
-      <Copy />
+      {openFolder && !addButtons && (
+        <>
+          <CreateDir />
+          <Upload />
+        </>
+      )}
+      {addButtons && (
+        <>
+          <Copy />
+          <Move />
+          <Download />
+          <Rename />
+          <Delete />
+        </>
+      )}
     </Space>
   );
-}
+};
 
-export default DataActionPanel
+export default observer(DataActionPanel);

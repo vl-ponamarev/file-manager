@@ -38,7 +38,6 @@ class DataController {
   }
 
   async getFilesByFolderId(req, res, next) {
-    console.log('req.params.folderId', req.params);
     const folderId = req.params.folderId;
 
     try {
@@ -71,8 +70,6 @@ class DataController {
     try {
       const id = { _id: req.params.id };
       const { formData } = req.body;
-      console.log('req.body', formData);
-      console.log('req.body', req.body);
       const post = await DataService.editFolder(id, formData);
       return res.json(post);
     } catch (error) {
@@ -84,8 +81,6 @@ class DataController {
     try {
       const id = { _id: req.params.id };
       const { formData } = req.body;
-      console.log('req.body', formData);
-      console.log('req.body', req.body);
       const post = await DataService.editFile(id, formData);
       return res.json(post);
     } catch (error) {
@@ -105,25 +100,21 @@ class DataController {
   async deleteFiles(req, res, next) {
     try {
       const response = await DataService.deleteFiles(req.body);
-      console.log('response', response);
       return res.status(200).json({ message: 'Success', response });
     } catch (e) {
       next(e);
     }
   }
 
-  async downloadFile(req, res, next) {
+  async downloadData(req, res, next) {
     try {
-      const file = await DataService.downloadFile(req.params.fileId, res);
-      res.download(file);
+      await DataService.download(req.body, res);
     } catch (e) {
       next(e);
     }
   }
 
   async moveItems(req, res, next) {
-    console.log('===>>>', req.body);
-
     try {
       const response = await DataService.moveItems(req.body);
       return res.status(200).json({ message: 'Success', response });
