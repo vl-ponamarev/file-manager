@@ -21,11 +21,11 @@ class MailService {
       text: '',
       html: `
       <div>
-      <h1>Для активации перейдите по ссылке</h1>
+      <h1>Для активации аккаунта в Family File Store перейдите по ссылке</h1>
       <a href="${link}">${link}</a>
       </div>
       `,
-    })
+    });
   }
 }
 

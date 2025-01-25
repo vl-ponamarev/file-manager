@@ -1,30 +1,30 @@
 import React, { useContext } from 'react'
 import { UserContext } from '../../index'
-import { observer } from 'mobx-react-lite'
-import { Button, styled } from '@mui/material'
-import { blue } from '@mui/material/colors'
+import { observer } from 'mobx-react-lite';
+import { LogoutOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 
 function Logout() {
-  const { userStore } = useContext(UserContext)
+  const { userStore } = useContext(UserContext);
 
   const logoutHandler = () => {
-    userStore.logout()
-    window.location.replace('/login')
-  }
-
-  const ColorButton = styled(Button)(({ theme }) => ({
-    color: theme.palette.getContrastText(blue[500]),
-    backgroundColor: blue[500],
-    '&:hover': {
-      backgroundColor: blue[700],
-    },
-  }))
-
+    userStore.logout();
+    window.location.replace('/login');
+  };
   return (
-    <ColorButton onClick={() => logoutHandler()} type="button">
-      Выйти
-    </ColorButton>
-  )
+    <Button
+      style={{
+        backgroundColor: '#1976d2',
+        color: 'white',
+        fontSize: 16,
+      }}
+      type="primary"
+      icon={<LogoutOutlined />}
+      onClick={() => logoutHandler()}
+    >
+      Logout
+    </Button>
+  );
 }
 
 export default observer(Logout)

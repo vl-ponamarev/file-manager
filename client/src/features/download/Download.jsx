@@ -4,8 +4,9 @@ import { CloudDownloadOutlined } from '@ant-design/icons';
 import { FilesContext } from 'index';
 import { observer } from 'mobx-react-lite';
 import { useContext } from 'react';
+import { useDownload } from 'shared/hooks/useDownload';
 
-const Download = () => {
+const Download = ({ menuType }) => {
   const { filesStore } = useContext(FilesContext);
   const selectedKeys = filesStore.selectedRowKeysStore;
   const selectedFilesAndFolders = selectedKeys?.reduce(
@@ -20,6 +21,16 @@ const Download = () => {
     },
     { files: [], folders: [] },
   );
+  console.log('ok');
+
+  console.log(selectedFilesAndFolders);
+
+  const downloadFiles = useDownload();
+  const handleClick = () => {
+    downloadFiles(selectedFilesAndFolders);
+  };
+
+  menuType && handleClick();
 
   const onClick = async () => {
     try {
@@ -54,7 +65,7 @@ const Download = () => {
     }
   };
 
-  return (
+  return menuType ? null : (
     <Button
       style={{
         backgroundColor: '#1976d2',
@@ -62,7 +73,7 @@ const Download = () => {
         color: 'white',
       }}
       icon={<CloudDownloadOutlined />}
-      onClick={onClick}
+      onClick={handleClick}
     >
       DOWNLOAD
     </Button>

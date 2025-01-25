@@ -3,18 +3,10 @@ import { observer } from 'mobx-react-lite';
 import { UserContext } from '../../index';
 import { MainPage } from 'pages';
 import EnterForm from './ui/EnterForm';
-import { Spin } from 'antd';
+import Loader from 'shared/ui/loader/Loader';
 
 function SignUpAction() {
   const { userStore } = useContext(UserContext);
-
-  const contentStyle = {
-    padding: 50,
-    background: 'rgba(0, 0, 0, 0.05)',
-    borderRadius: 4,
-  };
-
-  const content = <div style={contentStyle} />;
 
   const {
     isAuth,
@@ -28,20 +20,7 @@ function SignUpAction() {
   }, []);
 
   if (userStore.isLoading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-        }}
-      >
-        <Spin tip="Loading" size="large">
-          {content}
-        </Spin>{' '}
-      </div>
-    );
+    return <Loader />;
   }
 
   return !isAuth ? (

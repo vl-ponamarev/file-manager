@@ -7,6 +7,7 @@ import DataAdditionalMenu from 'shared/ui/menu/DataAdditionalMenu';
 import { handleDeleteOk } from 'shared/lib';
 import DeleteModal from 'shared/ui/modal/delete-modal/DeleteModal';
 import { EditNameModal, MoveToCopyToModal } from 'entities/folder/ui';
+import Download from 'features/download/Download';
 
 const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRowKeys }) => {
   const { filesStore } = useContext(FilesContext);
@@ -84,6 +85,7 @@ const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRow
     id: selectedMenuActionInfo.id,
     name: contextMenu?.record?.dataName,
   };
+  console.log(selectedMenuActionInfo);
 
   return (
     <div className="data-list-view">
@@ -158,6 +160,7 @@ const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRow
           setSelectedMenuActionInfo={setSelectedMenuActionInfo}
         />
       )}
+      {selectedMenuActionInfo?.action === 'download' && <Download menuType="contextMenu" />}
     </div>
   );
 };

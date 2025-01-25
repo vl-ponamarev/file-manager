@@ -19,6 +19,7 @@ export default class Store {
 
   setUser(user) {
     this.user = user;
+    this.isLoading = false;
   }
 
   setLoading(boolean) {
@@ -26,6 +27,7 @@ export default class Store {
   }
 
   async login(email, password) {
+    this.setLoading(true);
     try {
       const response = await AuthService.login(email, password);
       if (response?.data?.user?.isActivated) {
@@ -44,17 +46,42 @@ export default class Store {
       }
     } catch (err) {
       console.error(err);
+      errorStore.setError({
+        message: err.message,
+        status: true,
+        url: '',
+        timestamp: new Date().toISOString(),
+      });
+    } finally {
+      this.setLoading(false);
     }
   }
 
   async registration(email, password) {
+    this.setLoading(true);
+
     try {
       const response = await AuthService.registration(email, password);
       localStorage.setItem('token', response.data.accessToken);
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          email: response.data.user.email,
+          remember: response.data.user.remember,
+        }),
+      );
       this.setAuth(true);
       this.setUser(response.data.user);
     } catch (err) {
       console.error(err);
+      errorStore.setError({
+        message: err.message,
+        status: true,
+        url: '',
+        timestamp: new Date().toISOString(),
+      });
+    } finally {
+      this.setLoading(false);
     }
   }
 

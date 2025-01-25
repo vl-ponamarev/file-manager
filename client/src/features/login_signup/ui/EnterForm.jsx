@@ -5,7 +5,7 @@ import { ErrorContext, UserContext } from '../../../index';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Card, Typography } from 'antd';
 
-function EnterForm({ action }) {
+function EnterForm({ action, user }) {
   const { userStore } = useContext(UserContext);
   const { errorStore } = useContext(ErrorContext);
   const { errorData } = errorStore;
@@ -13,6 +13,13 @@ function EnterForm({ action }) {
 
   const onFinish = values => {
     action === 'login' ? userStore.login(values) : userStore.registration(values);
+    localStorage.setItem(
+      'user',
+      JSON.stringify({
+        email: values.email,
+        remember: values.remember,
+      }),
+    );
   };
 
   return (
@@ -36,7 +43,11 @@ function EnterForm({ action }) {
         </div>
         <Form
           name="login"
-          initialValues={{ remember: true }}
+          initialValues={
+            action === 'login'
+              ? { email: user.remember ? user.email : '', remember: user.remember }
+              : { remember: true }
+          }
           style={{ width: 360 }}
           onFinish={onFinish}
         >

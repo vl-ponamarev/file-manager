@@ -46,6 +46,17 @@ const DataAdditionalMenu = (id, setSelectedMenuActionInfo, type, setOpen = () =>
         </Space>
       </Menu.Item>
       <Menu.Item
+        key={`${id} download ${type} `}
+        onClick={e => {
+          handleMenuClick(e, setSelectedMenuActionInfo);
+        }}
+      >
+        <Space>
+          <DownloadOutlined />
+          <span> Download</span>
+        </Space>
+      </Menu.Item>
+      <Menu.Item
         key={`${id} delete ${type} `}
         onClick={e => {
           handleMenuClick(e, setSelectedMenuActionInfo);

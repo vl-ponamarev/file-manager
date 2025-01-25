@@ -1,5 +1,4 @@
-import axios from 'axios'
-import { useErrorContext } from 'index';
+import axios from 'axios';
 export const API_URL = 'http://localhost:4000/api';
 
 const api = axios.create({
@@ -8,8 +7,6 @@ const api = axios.create({
 });
 
 const setupInterceptors = () => {
-  // const { setError } = useErrorContext;
-
   api.interceptors.request.use(config => {
     config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
     return config;
