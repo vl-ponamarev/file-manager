@@ -24,11 +24,11 @@ const UploadFileAntd = () => {
     const handleSave = async () => {
       if (files && files.length > 0) {
         const fileFolder = filesStore.openFolder;
-        const formData = new FormData()
-        formData.append('owner', userStore.user.id)
-        formData.append('folder', fileFolder)
+        const formData = new FormData();
+        formData.append('owner', userStore?.user?.id);
+        formData.append('folder', fileFolder);
         for (let i = 0; i < files.length; i++) {
-          formData.append('mediacontent', files[i])
+          formData.append('mediacontent', files[i]);
         }
 
         try {
@@ -40,12 +40,12 @@ const UploadFileAntd = () => {
             });
           }
         } catch (error) {
-          console.error('Error uploading files:', error)
+          console.error('Error uploading files:', error);
         }
       }
-    }
-    handleSave()
-  }, [files, userStore.user.id])
+    };
+    handleSave();
+  }, [files, userStore?.user?.id]);
 
   return (
     <>

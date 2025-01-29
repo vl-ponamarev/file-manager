@@ -4,8 +4,9 @@ import { FilesContext } from 'index';
 export const useDownload = () => {
   const { filesStore } = useContext(FilesContext);
 
-  const downloadFiles = async selectedFilesAndFolders => {
+  const downloadFiles = async (selectedFilesAndFolders, setIsLoading) => {
     try {
+      filesStore.setIsLoading(true);
       const response = await filesStore.downloadData(selectedFilesAndFolders);
 
       if (response.status === 200 && response.data) {
@@ -30,6 +31,8 @@ export const useDownload = () => {
       }
     } catch (error) {
       console.error('Error downloading file:', error);
+    } finally {
+      filesStore.setIsLoading(false);
     }
   };
 

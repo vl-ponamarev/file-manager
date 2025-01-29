@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react';
 import { Table, Dropdown, Flex } from 'antd';
 import './DataTable.css';
 import { FilesContext } from 'index';
@@ -8,13 +8,27 @@ import { FolderOutlined, MoreOutlined, FileOutlined, ArrowUpOutlined } from '@an
 import DataAdditionalMenu from 'shared/ui/menu/DataAdditionalMenu';
 import { handleDeleteOk } from 'shared/lib';
 import DeleteModal from 'shared/ui/modal/delete-modal/DeleteModal';
+import { EditNameModal, MoveToCopyToModal } from 'entities/folder/ui';
+import Download from 'features/download/Download';
 
 const DataTable = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRowKeys }) => {
   const { filesStore } = useContext(FilesContext);
   const [contextMenu, setContextMenu] = useState(null);
   const [selectedRowId, setSelectedRowId] = useState(null);
-  const [action, setAction] = useState(null);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedMenuActionInfo, setSelectedMenuActionInfo] = useState({
+    id: '',
+    action: '',
+    type: '',
+  });
+  const [open, setOpen] = useState(false);
+  const [itemName, setItemName] = useState('');
+  const selectedKeys = filesStore.selectedRowKeysStore;
+  const [modalData, setModalData] = useState({
+    method: '',
+    dataToMove: [],
+  });
+  const isRenameButton =
+    selectedKeys.length > 0 && selectedKeys.length < 2 && selectedKeys[0] !== 'back';
 
   const columns = [
     {
@@ -66,14 +80,35 @@ const DataTable = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRowKey
       key: 'actions',
       render: (text, record) => {
         if (record.type === 'folder' || record.type === 'file') {
+          const handleActionClick = () => {
+            selectedRowKeys.includes(record.id)
+              ? setSelectedRowKeys(prev => [...prev])
+              : setSelectedRowKeys([record.id]);
+            setItemName(record.dataName);
+          };
           return (
-            <Dropdown overlay={DataAdditionalMenu(record)} trigger={['click']}>
-              <MoreOutlined className="action-button" style={{ fontSize: '20px' }} />
+            <Dropdown
+              // disabled
+              overlay={DataAdditionalMenu(
+                record?.id,
+                setSelectedMenuActionInfo,
+                record?.type,
+                setOpen,
+                isRenameButton,
+              )}
+              trigger={['click']}
+            >
+              <span onClick={handleActionClick}>
+                <MoreOutlined className="action-button" style={{ fontSize: '20px' }} />
+              </span>
             </Dropdown>
           );
         } else if (record.type === 'back') {
           return null;
         }
+        onclick = record => {
+          setSelectedRowKeys([record.id]);
+        };
       },
       width: '2%',
     },
@@ -82,20 +117,15 @@ const DataTable = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRowKey
   const handleRowContextMenu = (event, record) => {
     const { id } = record;
     event.preventDefault();
-    if (selectedRowKeys.length <= 1) {
-      setSelectedRowKeys([id]);
+    if (event.type === 'contextmenu') {
+      setContextMenu({
+        mouseX: event.clientX,
+        mouseY: event.clientY,
+        record,
+      });
+      selectedRowKeys.includes(id) ? event.preventDefault() : setSelectedRowKeys([id]);
       setSelectedRowId(id);
     }
-
-    setContextMenu(
-      contextMenu === null
-        ? {
-            mouseX: event.clientX,
-            mouseY: event.clientY,
-            record,
-          }
-        : null,
-    );
   };
 
   const onSelectChange = newSelectedRowKeys => {
@@ -120,8 +150,24 @@ const DataTable = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRowKey
         filesStore.setSelectedRowObjects([]);
       }
     },
+    getCheckboxProps: record => ({
+      disabled: record.type === 'back',
+    }),
   };
   const hasSelected = selectedRowKeys.length > 0;
+
+  useEffect(() => {
+    setModalData({
+      method: selectedMenuActionInfo?.action === 'move' ? 'move' : 'copy',
+      dataToMove: selectedKeys,
+    });
+  }, [selectedMenuActionInfo.action]);
+
+  const dataToRename = {
+    type: selectedMenuActionInfo.type,
+    id: selectedMenuActionInfo.id,
+    name: itemName,
+  };
 
   return (
     <Flex gap="middle" vertical>
@@ -133,15 +179,9 @@ const DataTable = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRowKey
         rowSelection={rowSelection}
         columns={columns}
         dataSource={initialData}
-        rowClassName={(record, index) => {
-          return record.id === selectedRowId ? 'selected-row' : '';
-        }}
         onRow={(record, index) => {
           return {
             onContextMenu: event => handleRowContextMenu(event, record),
-            // onClick: () => {
-            //   // const { id } = record
-            // },
             onDoubleClick: () => {
               const { id } = record;
               if (id !== 'back' && record.type === 'folder') {
@@ -162,9 +202,10 @@ const DataTable = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRowKey
           overlay={() =>
             DataAdditionalMenu(
               contextMenu?.record?.id,
-              setAction,
-              setSelectedId,
+              setSelectedMenuActionInfo,
               contextMenu?.record?.type,
+              setOpen,
+              isRenameButton,
             )
           }
           trigger={['click']}
@@ -185,16 +226,46 @@ const DataTable = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRowKey
           />
         </Dropdown>
       )}
-      {action === 'delete' && (
+      {selectedMenuActionInfo?.action === 'delete' && (
         <DeleteModal
-          action={action}
+          selectedMenuActionInfo={selectedMenuActionInfo}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
           handleDeleteOk={handleDeleteOk}
-          setAction={setAction}
-          selectedId={selectedId}
+        />
+      )}
+      {selectedMenuActionInfo?.action === 'move' && (
+        <MoveToCopyToModal
+          open={open}
+          setOpen={setOpen}
+          data={modalData}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
+        />
+      )}
+      {selectedMenuActionInfo?.action === 'copy' && (
+        <MoveToCopyToModal
+          open={open}
+          setOpen={setOpen}
+          data={modalData}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
+        />
+      )}
+      {selectedMenuActionInfo?.action === 'rename' && (
+        <EditNameModal
+          open={open}
+          setOpen={setOpen}
+          method="edit"
+          dataToRename={dataToRename}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
+        />
+      )}
+      {selectedMenuActionInfo?.action === 'download' && (
+        <Download
+          selectedMenuActionInfo={selectedMenuActionInfo}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
         />
       )}
     </Flex>
   );
 };
 
-export default observer(DataTable)
+export default observer(DataTable);

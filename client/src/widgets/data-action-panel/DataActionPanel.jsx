@@ -10,7 +10,10 @@ const DataActionPanel = () => {
   const openFolder = filesStore.openFolder;
   const selectedRowKeysStore = filesStore.selectedRowKeysStore;
   const addButtons = selectedRowKeysStore.length > 0 && selectedRowKeysStore[0] !== 'back';
-
+  const isRenameButton =
+    selectedRowKeysStore.length > 0 &&
+    selectedRowKeysStore.length < 2 &&
+    selectedRowKeysStore[0] !== 'back';
   return (
     <Space>
       {openFolder && !addButtons && (
@@ -24,7 +27,7 @@ const DataActionPanel = () => {
           <Copy />
           <Move />
           <Download />
-          <Rename />
+          {isRenameButton && <Rename />}
           <Delete />
         </>
       )}

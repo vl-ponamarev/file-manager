@@ -83,7 +83,7 @@ const DataViewComponent = ({ param, levelUp, setLevelUp }) => {
               mimetype: item.mimetype,
             };
           });
-        if (rootFolder === '669f6de3daad41e24782120f') {
+        if (rootFolder === '6799ec01536a01175c1ad097') {
           setInitialData([...rootFolders, ...rootFiles]);
         } else {
           setInitialData([

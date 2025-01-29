@@ -31,7 +31,7 @@ app.use(
     secret: process.env.SESSION_SECRET ?? 'test',
     resave: true,
     store: new FileStore({
-      path: '/home/vladimir/Documents/Текущие_проекты/node-app/server/sessions',
+      path: '/home/vladimir/Documents/Текущие_проекты/file-manager/server/sessions',
     }),
     saveUninitialized: false,
     cookie: {
@@ -39,7 +39,7 @@ app.use(
       httpOnly: true,
     },
   }),
-)
+);
 
 app.use('/api', router)
 app.use('/api/post', router)

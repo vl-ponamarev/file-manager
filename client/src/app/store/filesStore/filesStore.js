@@ -18,12 +18,17 @@ export default class FilesStore {
 
   dataTree = [];
 
-  rootKey = '669f6de3daad41e24782120f';
+  rootKey = '6799ec01536a01175c1ad097';
+
+  isLoading = false;
 
   constructor() {
     makeAutoObservable(this);
   }
 
+  setIsLoading(isLoading) {
+    this.isLoading = isLoading;
+  }
   setFiles(files) {
     this.files = files;
   }

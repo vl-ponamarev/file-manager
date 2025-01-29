@@ -13,9 +13,6 @@ class DataService {
     destination: (req, file, cb) => {
       cb(null, process.env.UPLOAD_URL);
     },
-    // filename: (req, file, cb) => {
-    //   cb(null, `${Date.now()}-${file.originalname}`);
-    // },
     filename: (req, file, cb) => {
       const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
       const extension = file.originalname.split('.').pop();
@@ -23,7 +20,6 @@ class DataService {
     },
   });
 
-  // upload = multer({ storage: this.storage }).single('mediacontent')
   upload = multer({ storage: this.storage }).array('mediacontent', 50);
 
   async getFiles() {

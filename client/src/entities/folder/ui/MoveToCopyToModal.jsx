@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Modal } from 'antd';
 import Draggable from 'react-draggable';
 import { observer } from 'mobx-react-lite';
@@ -12,22 +12,27 @@ const MoveToCopyToModal = ({ open, setOpen, data, setSelectedMenuActionInfo = ()
     bottom: 0,
     right: 0,
   });
-  const [menuValue, setMenuValue] = useState('669f6de3daad41e24782120f');
+  const [menuValue, setMenuValue] = useState('6799ec01536a01175c1ad097');
   const { filesStore } = useContext(FilesContext);
   const draggleRef = useRef(null);
-  const [folders, setFolders] = useState(
-    data?.dataToMove
+  const [folders, setFolders] = useState([]);
+
+  useEffect(() => {
+    const folders = data?.dataToMove
       .map(item => {
         const currentItem = filesStore.folders.find(folder => folder?._id === item);
         return currentItem?._id;
       })
-      .filter(folder => (folder ? folder : null)),
-  );
+      .filter(folder => (folder ? folder : null));
+    setFolders(folders);
+  }, [data?.dataToMove]);
+
   const files = data?.dataToMove.filter(item => !folders.includes(item));
   const handleOk = e => {
     if (data?.method === 'move' && menuValue) {
       const items = { folders, files };
       const dataToMove = { rootFolderId: menuValue, items };
+
       filesStore.moveData(dataToMove);
     } else if (data?.method === 'copy' && menuValue) {
       const items = { folders, files };
@@ -38,6 +43,7 @@ const MoveToCopyToModal = ({ open, setOpen, data, setSelectedMenuActionInfo = ()
       return { ...prev, action: '' };
     });
     setOpen(false);
+    filesStore.setSelectedRowKeysStore([]);
   };
   const handleCancel = e => {
     setOpen(false);
@@ -97,7 +103,7 @@ const MoveToCopyToModal = ({ open, setOpen, data, setSelectedMenuActionInfo = ()
           </Draggable>
         )}
       >
-        <DataMenu setMenuValue={setMenuValue} folders={folders} />
+        <DataMenu setMenuValue={setMenuValue} folders={folders} method={data.method} />
       </Modal>
     </>
   );

@@ -14,7 +14,7 @@ const DataSideMenu = () => {
   const [filesIds, setFilesIds] = useState([]);
   const rootKey = filesStore.rootKey;
   const [openStateKeys, setOpenStateKeys] = useState([rootKey]);
-  const rootFolder = filesStore.folders.find(item => item.foldername === 'Folders');
+  const rootFolder = filesStore?.folders?.find(item => item.foldername === 'Folders');
   const refOpenKeysLength = useRef(0);
   const refOpenKeys = useRef(null);
   const [action, setAction] = useState(null);

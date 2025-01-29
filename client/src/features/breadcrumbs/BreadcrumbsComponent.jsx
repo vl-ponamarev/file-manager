@@ -5,7 +5,7 @@ import { FilesContext } from 'index'
 
 const BreadcrumbsComponent = () => {
   const { filesStore } = useContext(FilesContext)
-  const rootFolderId = '669f6de3daad41e24782120f'
+  const rootFolderId = '6799ec01536a01175c1ad097';
   const [foldersList, setFoldersList] = useState([
     { foldername: 'Folders', id: rootFolderId },
   ])

@@ -24,6 +24,8 @@ const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRow
     method: '',
     dataToMove: [],
   });
+  const isRenameButton =
+    selectedKeys.length > 0 && selectedKeys.length < 2 && selectedKeys[0] !== 'back';
 
   const handleCardClick = useCallback(
     (event, cardData) => {
@@ -35,11 +37,7 @@ const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRow
           mouseY: event.clientY,
           record: cardData,
         });
-        if (selectedRowKeys.length > 0) {
-          return;
-        }
-        setSelectedRowKeys([id]);
-        return;
+        selectedRowKeys.includes(id) ? event.preventDefault() : setSelectedRowKeys([id]);
       }
 
       if (clickTimeout) {
@@ -85,18 +83,19 @@ const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRow
     id: selectedMenuActionInfo.id,
     name: contextMenu?.record?.dataName,
   };
-  console.log(selectedMenuActionInfo);
 
   return (
     <div className="data-list-view">
-      {initialData?.map(item => (
-        <MemoOneItem
-          key={item.id}
-          cardData={item}
-          handleCardClick={handleCardClick}
-          selectedCards={selectedRowKeys}
-        />
-      ))}
+      {initialData?.map(item => {
+        return (
+          <MemoOneItem
+            key={item.id}
+            cardData={item}
+            handleCardClick={handleCardClick}
+            selectedCards={selectedRowKeys}
+          />
+        );
+      })}
 
       {contextMenu && (
         <Dropdown
@@ -104,10 +103,9 @@ const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRow
             DataAdditionalMenu(
               contextMenu?.record?.id,
               setSelectedMenuActionInfo,
-              // setAction,
-              // setSelectedId,
               contextMenu?.record?.type,
               setOpen,
+              isRenameButton,
             )
           }
           trigger={['click']}
@@ -160,7 +158,12 @@ const DataListView = ({ initialData, setLevelUp, selectedRowKeys, setSelectedRow
           setSelectedMenuActionInfo={setSelectedMenuActionInfo}
         />
       )}
-      {selectedMenuActionInfo?.action === 'download' && <Download menuType="contextMenu" />}
+      {selectedMenuActionInfo?.action === 'download' && (
+        <Download
+          selectedMenuActionInfo={selectedMenuActionInfo}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
+        />
+      )}
     </div>
   );
 };

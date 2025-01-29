@@ -1,3 +1,4 @@
+import { Menu, Space } from 'antd';
 import {
   EditOutlined,
   ArrowRightOutlined,
@@ -5,24 +6,31 @@ import {
   DeleteOutlined,
   DownloadOutlined,
 } from '@ant-design/icons';
+import { handleMenuClick } from 'shared/lib';
 
-const { Menu, Space } = require('antd');
-const { handleMenuClick } = require('shared/lib');
+const DataAdditionalMenu = (
+  id,
+  setSelectedMenuActionInfo,
+  type,
+  setOpen = () => {},
+  isRenameButton,
+) => {
 
-const DataAdditionalMenu = (id, setSelectedMenuActionInfo, type, setOpen = () => {}) => {
   return (
     <Menu>
-      <Menu.Item
-        key={`${id} rename ${type}`}
-        onClick={e => {
-          handleMenuClick(e, setSelectedMenuActionInfo, setOpen);
-        }}
-      >
-        <Space>
-          <EditOutlined />
-          <span>Rename</span>
-        </Space>
-      </Menu.Item>
+      {isRenameButton && (
+        <Menu.Item
+          key={`${id} rename ${type}`}
+          onClick={e => {
+            handleMenuClick(e, setSelectedMenuActionInfo, setOpen);
+          }}
+        >
+          <Space>
+            <EditOutlined />
+            <span>Rename</span>
+          </Space>
+        </Menu.Item>
+      )}
       <Menu.Item
         key={`${id} move ${type}`}
         onClick={e => {

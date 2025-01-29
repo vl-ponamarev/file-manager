@@ -18,8 +18,6 @@ const Router = observer(() => {
     return <Loader />;
   }
 
-  console.log(isActivated);
-
   return (
     <Routes>
       {!isAuth && (

@@ -12,7 +12,7 @@ export const UserContext = createContext(userStore);
 export const postStore = new PostStore();
 export const PostContext = createContext(postStore);
 export const filesStore = new FilesStore();
-export const FilesContext = createContext(postStore);
+export const FilesContext = createContext(filesStore);
 export const errorStore = new ErrorStore();
 export const ErrorContext = createContext(errorStore);
 export const useErrorContext = () => useContext(ErrorContext);
