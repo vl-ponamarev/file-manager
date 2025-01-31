@@ -5,6 +5,8 @@ import {
   CopyOutlined,
   DeleteOutlined,
   DownloadOutlined,
+  FolderAddOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
 import { handleMenuClick } from 'shared/lib';
 
@@ -14,10 +16,26 @@ const DataAdditionalMenu = (
   type,
   setOpen = () => {},
   isRenameButton,
+  sideMenu = false,
 ) => {
-
   return (
     <Menu>
+      {sideMenu && (
+        <>
+          <Menu.Item key={`${id} ${type} new`}>
+            <Space>
+              <FolderAddOutlined />
+              <span>New directory</span>
+            </Space>
+          </Menu.Item>
+          <Menu.Item key={`${id} ${type} upload`}>
+            <Space>
+              <UploadOutlined />
+              <span>Upload files</span>
+            </Space>
+          </Menu.Item>{' '}
+        </>
+      )}
       {isRenameButton && (
         <Menu.Item
           key={`${id} rename ${type}`}

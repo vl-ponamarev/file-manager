@@ -5,8 +5,12 @@ import { Menu } from 'antd';
 import { FilesContext } from 'index';
 import './DataMenu.css';
 import DropdownMenu from './ui/DropdownMenu';
-import { handleDeleteOk, handleMenuClick } from 'shared/lib';
+import { handleDeleteOk } from 'shared/lib';
 import DeleteModal from 'shared/ui/modal/delete-modal/DeleteModal';
+import { EditNameModal, MoveToCopyToModal } from 'entities/folder/ui';
+import Download from 'features/download/Download';
+import UploadFiles from 'features/uploadFile/UploadFiles';
+import CreateDirectory from 'features/create-directory/CreateDirectory';
 
 const DataSideMenu = () => {
   const { filesStore } = useContext(FilesContext);
@@ -17,8 +21,16 @@ const DataSideMenu = () => {
   const rootFolder = filesStore?.folders?.find(item => item.foldername === 'Folders');
   const refOpenKeysLength = useRef(0);
   const refOpenKeys = useRef(null);
-  const [action, setAction] = useState(null);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedMenuActionInfo, setSelectedMenuActionInfo] = useState({
+    id: '',
+    action: '',
+    type: '',
+  });
+  const [open, setOpen] = useState(false);
+  const [modalData, setModalData] = useState({
+    method: '',
+    dataToMove: [],
+  });
 
   useEffect(() => {
     filesStore.getFolders();
@@ -46,9 +58,13 @@ const DataSideMenu = () => {
                 {obj.foldername}
                 <div className="menu-item-dropdown">
                   <DropdownMenu
-                    handleMenuClick={e => handleMenuClick(e, setAction, setSelectedId)}
                     id={item._id}
+                    setSelectedMenuActionInfo={setSelectedMenuActionInfo}
                     type={'folder'}
+                    setOpen={setOpen}
+                    isRenameButton={true}
+                    sideMenu={true}
+                    name={obj.foldername}
                   />
                 </div>
               </div>
@@ -64,9 +80,13 @@ const DataSideMenu = () => {
                 {obj.foldername}
                 <div className="menu-item-dropdown">
                   <DropdownMenu
-                    handleMenuClick={e => handleMenuClick(e, setAction, setSelectedId)}
                     id={item._id}
+                    setSelectedMenuActionInfo={setSelectedMenuActionInfo}
                     type={'folder'}
+                    setOpen={setOpen}
+                    isRenameButton={true}
+                    sideMenu={true}
+                    name={obj.foldername}
                   />
                 </div>
               </div>
@@ -85,9 +105,13 @@ const DataSideMenu = () => {
                 {item.originalname}
                 <div className="menu-item-dropdown">
                   <DropdownMenu
-                    handleMenuClick={e => handleMenuClick(e, setAction, setSelectedId)}
                     id={item._id}
+                    setSelectedMenuActionInfo={setSelectedMenuActionInfo}
                     type={'file'}
+                    setOpen={setOpen}
+                    isRenameButton={true}
+                    sideMenu={true}
+                    name={item.filename}
                   />
                 </div>
               </div>
@@ -210,7 +234,7 @@ const DataSideMenu = () => {
       }
     }
   };
-  const onSelect = openKeys => {
+  const onSelect = (openKeys, data) => {
     if (filesIds.includes(openKeys.key)) return;
     filesStore.setOpenFolder(openKeys.key);
     refOpenKeys.current = openKeys.keyPath;
@@ -224,6 +248,19 @@ const DataSideMenu = () => {
       refOpenKeys.current = openKeys.keyPath.filter(key => key !== openKeys.key);
       refOpenKeysLength.current = refOpenKeys.current.length;
     }
+  };
+
+  useEffect(() => {
+    setModalData({
+      method: selectedMenuActionInfo?.action === 'move' ? 'move' : 'copy',
+      dataToMove: [selectedMenuActionInfo.id],
+    });
+  }, [selectedMenuActionInfo.action]);
+
+  const dataToRename = {
+    type: selectedMenuActionInfo.type,
+    id: selectedMenuActionInfo.id,
+    name: selectedMenuActionInfo.name,
   };
 
   return (
@@ -243,12 +280,52 @@ const DataSideMenu = () => {
         selectable={true}
         danger={true}
       />
-      {action === 'delete' && (
+      {selectedMenuActionInfo?.action === 'new' && (
+        <CreateDirectory isActionPanel={true} selectedMenuActionInfo={selectedMenuActionInfo} />
+      )}
+      {selectedMenuActionInfo?.action === 'upload' && (
+        <UploadFiles
+          isActionPanel={true}
+          selectedMenuActionInfo={selectedMenuActionInfo}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
+        />
+      )}
+      {selectedMenuActionInfo?.action === 'delete' && (
         <DeleteModal
-          action={action}
+          selectedMenuActionInfo={selectedMenuActionInfo}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
           handleDeleteOk={handleDeleteOk}
-          setAction={setAction}
-          selectedId={selectedId}
+        />
+      )}
+      {selectedMenuActionInfo?.action === 'move' && (
+        <MoveToCopyToModal
+          open={open}
+          setOpen={setOpen}
+          data={modalData}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
+        />
+      )}
+      {selectedMenuActionInfo?.action === 'copy' && (
+        <MoveToCopyToModal
+          open={open}
+          setOpen={setOpen}
+          data={modalData}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
+        />
+      )}
+      {selectedMenuActionInfo?.action === 'rename' && (
+        <EditNameModal
+          open={open}
+          setOpen={setOpen}
+          method="edit"
+          dataToRename={dataToRename}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
+        />
+      )}
+      {selectedMenuActionInfo?.action === 'download' && (
+        <Download
+          selectedMenuActionInfo={selectedMenuActionInfo}
+          setSelectedMenuActionInfo={setSelectedMenuActionInfo}
         />
       )}
     </>

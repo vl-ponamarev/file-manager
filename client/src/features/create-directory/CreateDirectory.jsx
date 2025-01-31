@@ -1,30 +1,36 @@
 import { Button } from 'antd'
-import React, { useState } from 'react'
-import { FolderAddOutlined } from '@ant-design/icons'
+import React, { useState, useEffect } from 'react';
+import { FolderAddOutlined } from '@ant-design/icons';
 import { EditNameModal } from 'entities/folder/ui';
 
-const CreateDirectory = () => {
-  const [open, setOpen] = useState(false)
+const CreateDirectory = ({ isActionPanel = false, selectedMenuActionInfo }) => {
+  const [open, setOpen] = useState(false);
 
   const onClick = () => {
-    setOpen(true)
-  }
+    setOpen(true);
+  };
+  useEffect(() => {
+    isActionPanel && onClick();
+  }, [selectedMenuActionInfo]);
+
   return (
     <>
-      <Button
-        style={{
-          backgroundColor: '#1976d2',
-          borderColor: '#1976d2',
-          color: 'white',
-        }}
-        icon={<FolderAddOutlined />}
-        onClick={onClick}
-      >
-        NEW DIRECTORY
-      </Button>
+      {!isActionPanel && (
+        <Button
+          style={{
+            backgroundColor: '#1976d2',
+            borderColor: '#1976d2',
+            color: 'white',
+          }}
+          icon={<FolderAddOutlined />}
+          onClick={onClick}
+        >
+          NEW FOLDER
+        </Button>
+      )}
       {open && <EditNameModal open={open} setOpen={setOpen} method="create" />}
     </>
-  )
-}
+  );
+};
 
 export default CreateDirectory

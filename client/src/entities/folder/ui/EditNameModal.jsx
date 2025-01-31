@@ -20,7 +20,7 @@ const EditNameModal = ({
   const { filesStore } = useContext(FilesContext);
   const date = new Date();
   const dataType = dataToRename?.type;
-  const { type, id, name } = dataToRename ? dataToRename : { type: null, id: null, name: null };
+  const { name } = dataToRename ? dataToRename : { type: null, id: null, name: null };
   const [value, setValue] = useState(method === 'create' ? '' : name);
 
   const draggleRef = useRef(null);
@@ -109,7 +109,7 @@ const EditNameModal = ({
         )}
       >
         <Input
-          placeholder={method === 'create' ? `Create Folder` : name}
+          placeholder={method === 'create' ? `Folder-name` : name}
           value={value}
           onChange={e => setValue(e.target.value)}
         />

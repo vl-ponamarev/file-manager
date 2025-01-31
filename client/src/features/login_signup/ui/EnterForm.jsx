@@ -86,7 +86,7 @@ function EnterForm({ action, user }) {
               {action === 'login' ? 'Login' : 'Signup'}
             </Button>
             <Text type="secondary">
-              {action === 'login' ? 'Have an account?' : 'Have not got an account?'}
+              {action === 'login' ? 'Already have an account?' : "Don't have an account?"}
             </Text>{' '}
             {action === 'login' ? (
               <NavLink to="/signup">Signup</NavLink>
